@@ -3,6 +3,7 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -43,6 +44,10 @@ export class UserDetaile extends BaseEntity {
   @Column({ type: 'enum', enum: userStatus, default: userStatus.NOTCOMPLETED })
   status: userStatus;
 
-  @OneToOne((type) => User, (user) => user.userDetails, { eager: false })
+  @OneToOne(() => User, (user) => user.userDetails, {
+    eager: false,
+    nullable: false,
+  })
+  @JoinColumn()
   user: User;
 }

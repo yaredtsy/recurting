@@ -24,6 +24,7 @@ export class UserRepository extends Repository<User> {
           isRegister = true;
 
           await newUser.save();
+          delete newUser.password;
 
           return newUser;
         } catch (err) {
@@ -54,7 +55,7 @@ export class UserRepository extends Repository<User> {
         throw new InternalServerErrorException();
       }
     }
-
+    delete user.password;
     return user;
   }
 }

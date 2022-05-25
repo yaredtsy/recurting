@@ -10,5 +10,4 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   entities: [__dirname + '/../**/*.entity.ts'],
   synchronize: true,
   autoLoadEntities: true,
-  ssl: true,
 };
