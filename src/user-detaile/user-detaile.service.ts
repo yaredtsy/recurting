@@ -31,6 +31,6 @@ export class UserDetaileService {
   }
 
   getUserDetail(user: User) {
-    // return user.userDetails;
+    return user.userDetails;
   }
 }

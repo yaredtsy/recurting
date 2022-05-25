@@ -29,6 +29,6 @@ export class User extends BaseEntity {
     eager: true,
     nullable: true,
   })
-  @JoinColumn()
+  @JoinColumn({ name: 'userDetails' })
   userDetails: UserDetaile;
 }
