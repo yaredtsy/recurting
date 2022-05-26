@@ -1,9 +1,11 @@
 import { UserDetaile } from 'src/user-detaile/model/user-detail.entity';
+import { WorkHistory } from 'src/work-history/model/work-history.enity';
 import {
   BaseEntity,
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   Unique,
@@ -31,4 +33,11 @@ export class User extends BaseEntity {
   })
   @JoinColumn({ name: 'userDetails' })
   userDetails: UserDetaile;
+
+  @OneToMany((type) => WorkHistory, (workHistory) => workHistory.user, {
+    eager: true,
+    nullable: true,
+  })
+  @JoinColumn({ name: 'workHistory' })
+  workHistory: WorkHistory[];
 }

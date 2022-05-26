@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Observable } from 'rxjs';
 import { CreateUserDetaileDto } from './dtos/create-user-detail.dto.';
 import { UpdateUserDetaileDto } from './dtos/update-user-detail.dto';
 import { CloudinarystorageProvider } from './providers/cloudinary.provider';
