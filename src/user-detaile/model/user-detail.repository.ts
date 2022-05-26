@@ -1,7 +1,7 @@
 import { User } from 'src/auth/model/auth.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository, UpdateResult } from 'typeorm';
 import { CreateUserDetaileDto } from '../dtos/create-user-detail.dto.';
-import { UserDetaile } from '../user-detail.entity';
+import { UserDetaile } from './user-detail.entity';
 
 @EntityRepository(UserDetaile)
 export class UserDetaileRepository extends Repository<UserDetaile> {
@@ -23,5 +23,13 @@ export class UserDetaileRepository extends Repository<UserDetaile> {
     }
 
     return userdetail;
+  }
+
+  async updateProfile(user: User, path: string) {
+    const userdetail: UpdateResult = await UserDetaile.update(
+      { user: user },
+      { image: path },
+    );
+    if (userdetail.affected > 0) return user.userDetails;
   }
 }

@@ -5,13 +5,18 @@ import {
   Patch,
   Post,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Observable } from 'rxjs';
 import { CreateUserDetaileDto } from './dtos/create-user-detail.dto.';
 import { UpdateUserDetaileDto } from './dtos/update-user-detail.dto';
+import { CloudinarystorageProvider } from './providers/cloudinary.provider';
 import { UserDetaileService } from './user-detaile.service';
 
 @Controller('user-detaile')
@@ -45,7 +50,12 @@ export class UserDetaileController {
   }
 
   @Post('upload-image')
-  uploadImage() {
-    // return this.userdetaileService.;
+  @UseInterceptors(
+    FileInterceptor('profile', {
+      storage: CloudinarystorageProvider,
+    }),
+  )
+  uploadImage(@Req() req, @UploadedFile() file: Express.Multer.File) {
+    return this.userdetaileService.imageUpload(req.user, file);
   }
 }

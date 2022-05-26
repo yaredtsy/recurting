@@ -1,4 +1,4 @@
-import { UserDetaile } from 'src/user-detaile/user-detail.entity';
+import { UserDetaile } from 'src/user-detaile/model/user-detail.entity';
 import {
   BaseEntity,
   Column,

@@ -1,5 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { v2 } from 'cloudinary';
+import toStream from 'buffer-to-stream';
 import { User } from 'src/auth/model/auth.entity';
 import { CreateUserDetaileDto } from './dtos/create-user-detail.dto.';
 import { UpdateUserDetaileDto } from './dtos/update-user-detail.dto';
@@ -32,5 +34,9 @@ export class UserDetaileService {
 
   getUserDetail(user: User) {
     return user.userDetails;
+  }
+
+  async imageUpload(user: User, file: Express.Multer.File) {
+    return await this.userDetaileRepository.updateProfile(user, file.path);
   }
 }
