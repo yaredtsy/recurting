@@ -1,4 +1,5 @@
 import { UserDetaile } from 'src/user-detaile/model/user-detail.entity';
+import { UserSkill } from 'src/user-skills/model/user-skills.entity';
 import { WorkHistory } from 'src/work-history/model/work-history.enity';
 import {
   BaseEntity,
@@ -40,4 +41,8 @@ export class User extends BaseEntity {
   })
   @JoinColumn({ name: 'workHistory' })
   workHistory: WorkHistory[];
+
+  @OneToMany(() => UserSkill, (userSkill) => userSkill.user)
+  @JoinColumn()
+  skill: UserSkill[];
 }

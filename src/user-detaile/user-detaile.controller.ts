@@ -27,6 +27,16 @@ export class UserDetaileController {
   getUserDetail(@Req() req) {
     return this.userdetaileService.getUserDetail(req.user);
   }
+
+  @Post('')
+  @UsePipes(ValidationPipe)
+  createUserDetail(@Req() req, @Body() createUserDetail: CreateUserDetaileDto) {
+    return this.userdetaileService.createUserDetaile(
+      req.user,
+      createUserDetail,
+    );
+  }
+
   @Patch('')
   @UsePipes(ValidationPipe)
   updateUserDetaile(
@@ -36,15 +46,6 @@ export class UserDetaileController {
     return this.userdetaileService.updateUserDetaile(
       req.user,
       updateUserDetaile,
-    );
-  }
-
-  @Post('')
-  @UsePipes(ValidationPipe)
-  createUserDetail(@Req() req, @Body() createUserDetail: CreateUserDetaileDto) {
-    return this.userdetaileService.createUserDetaile(
-      req.user,
-      createUserDetail,
     );
   }
 
