@@ -1,9 +1,11 @@
 import { UserSkill } from 'src/user-skills/model/user-skills.entity';
+import { WorkHistory } from 'src/work-history/model/work-history.enity';
 import {
   BaseEntity,
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -19,4 +21,7 @@ export class Skill extends BaseEntity {
   @OneToMany(() => UserSkill, (userSkill) => userSkill.skill)
   @JoinColumn()
   userSkill: UserSkill[];
+
+  @ManyToMany(() => WorkHistory, (workeHistory) => workeHistory.skills)
+  workHistory: WorkHistory[];
 }

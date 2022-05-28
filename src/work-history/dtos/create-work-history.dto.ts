@@ -1,4 +1,4 @@
-import { IsDate, IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreatWorkDetailDto {
   @IsString()
@@ -20,4 +20,8 @@ export class CreatWorkDetailDto {
   @IsString()
   @IsNotEmpty()
   role: string;
+
+  @IsNotEmpty()
+  @IsArray()
+  skill: number[];
 }

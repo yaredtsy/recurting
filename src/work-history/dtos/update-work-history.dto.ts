@@ -1,4 +1,4 @@
-import { IsDateString, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsString } from 'class-validator';
 
 export class UpdateWorkDetailDto {
   @IsString()
@@ -15,4 +15,7 @@ export class UpdateWorkDetailDto {
 
   @IsString()
   role: string;
+
+  @IsArray()
+  skill: number[];
 }
