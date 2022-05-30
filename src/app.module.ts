@@ -6,6 +6,7 @@ import { UserDetaileModule } from './user-detaile/user-detaile.module';
 import { WorkHistoryModule } from './work-history/work-history.module';
 import { SkillsModule } from './skills/skills.module';
 import { UserSkillsModule } from './user-skills/user-skills.module';
+import { EducationModule } from './education/education.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig),
@@ -14,6 +15,7 @@ import { UserSkillsModule } from './user-skills/user-skills.module';
     WorkHistoryModule,
     SkillsModule,
     UserSkillsModule,
+    EducationModule,
   ],
 })
 export class AppModule {}

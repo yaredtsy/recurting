@@ -1,3 +1,4 @@
+import { Education } from 'src/education/model/education.entity';
 import { UserDetaile } from 'src/user-detaile/model/user-detail.entity';
 import { UserSkill } from 'src/user-skills/model/user-skills.entity';
 import { WorkHistory } from 'src/work-history/model/work-history.enity';
@@ -39,10 +40,11 @@ export class User extends BaseEntity {
     eager: true,
     nullable: true,
   })
-  @JoinColumn({ name: 'workHistory' })
   workHistory: WorkHistory[];
 
   @OneToMany(() => UserSkill, (userSkill) => userSkill.user)
-  @JoinColumn()
   skill: UserSkill[];
+
+  // @OneToMany((type) => Education, (education) => education.colleage)
+  // education: Education;
 }

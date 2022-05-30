@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  server:
+    build: .
+    ports:
+      - '9000:9000'
+  db:
+    image: 'postgres'
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRES_PASSWORD: 'ruka1234'
+      POSTGRES_USER: 'ruka'
+    volumes:
+      - data:/var/lib/postgresql/data
+volumes:
+  data: 
