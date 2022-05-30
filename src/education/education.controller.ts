@@ -20,22 +20,26 @@ export class EducationController {
   constructor(private educationService: EducationService) {}
 
   @Get('')
-  getEducation() {}
+  getEducation(@Req() req) {
+    return this.educationService.getEducation(req.user);
+  }
 
   @Post('')
-  creatEducation(@Req() req, @Body() createEducation: CreateEducationDto) {}
+  creatEducation(@Req() req, @Body() createEducation: CreateEducationDto) {
+    return this.educationService.createEducation(req.user, createEducation);
+  }
 
   @Patch(':id')
   updateEducation(
     @Req() req,
     @Param('id', new ParseIntPipe()) id,
     @Body() updateEducation: CreateEducationDto,
-  ) {}
+  ) {
+    return this.educationService.updateEducation(req.user, id, updateEducation);
+  }
 
   @Delete(':id')
-  deleteEducation(
-    @Req() req,
-    @Param('id', new ParseIntPipe()) id,
-    @Body() deleteEducation: CreateEducationDto,
-  ) {}
+  deleteEducation(@Req() req, @Param('id', new ParseIntPipe()) id) {
+    return this.educationService.deleteEducation(req.user, id);
+  }
 }

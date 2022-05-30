@@ -11,15 +11,30 @@ export class EducationService {
     private educationRepository: EducationRepository,
   ) {}
 
-  getEducation() {}
+  async getEducation(user: User) {
+    return await this.educationRepository.find({ user: user });
+  }
 
-  createEducation(user: User, createEducation: CreateEducationDto) {}
+  async createEducation(user: User, createEducation: CreateEducationDto) {
+    return await this.educationRepository.createEducation(
+      user,
+      createEducation,
+    );
+  }
 
-  updateEducation(
+  async updateEducation(
     user: User,
     id: number,
     updateEducation: CreateEducationDto,
-  ) {}
+  ) {
+    return await this.educationRepository.updateEducation(
+      user,
+      id,
+      updateEducation,
+    );
+  }
 
-  deleteEducation(user: User, id: number) {}
+  async deleteEducation(user: User, id: number) {
+    return await this.educationRepository.deleteEducation(user, id);
+  }
 }

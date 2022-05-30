@@ -45,6 +45,6 @@ export class User extends BaseEntity {
   @OneToMany(() => UserSkill, (userSkill) => userSkill.user)
   skill: UserSkill[];
 
-  // @OneToMany((type) => Education, (education) => education.colleage)
-  // education: Education;
+  @OneToMany((type) => Education, (education) => education.colleage)
+  education: Education;
 }

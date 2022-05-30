@@ -25,7 +25,7 @@ export class Education extends BaseEntity {
   @Column()
   colleage: string;
 
-  //   @ManyToOne((type) => User, (user) => user.education)
-  //   @JoinColumn()
-  //   user: User;
+  @ManyToOne((type) => User, (user) => user.education)
+  @JoinColumn()
+  user: User;
 }
