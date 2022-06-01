@@ -34,7 +34,7 @@ export class AuthService {
       user = await this.userRepository.createUser(createUserDto);
     }
 
-    response.user = user;
+    response.user = this.userRepository.removeRealtedFiled(user);
     response.accessToken = this.jwtService.sign(payload);
     return response;
   }

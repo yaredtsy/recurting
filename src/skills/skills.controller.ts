@@ -10,10 +10,12 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateSkillDto } from './dtos/create-skill.dto';
 import { SkillsService } from './skills.service';
 
 @Controller('skills')
+@ApiTags('Skills')
 export class SkillsController {
   constructor(private readonly skillsService: SkillsService) {}
 

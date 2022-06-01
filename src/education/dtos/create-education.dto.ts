@@ -12,4 +12,8 @@ export class CreateEducationDto {
   @IsDateString()
   @IsNotEmpty()
   to: Date;
+
+  @IsNotEmpty()
+  @IsString()
+  colleage: string;
 }

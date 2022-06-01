@@ -42,9 +42,14 @@ export class User extends BaseEntity {
   })
   workHistory: WorkHistory[];
 
-  @OneToMany(() => UserSkill, (userSkill) => userSkill.user)
+  @OneToMany(() => UserSkill, (userSkill) => userSkill.user, {
+    nullable: true,
+    eager: true,
+  })
   skill: UserSkill[];
 
-  @OneToMany((type) => Education, (education) => education.colleage)
+  @OneToMany((type) => Education, (education) => education.colleage, {
+    nullable: true,
+  })
   education: Education;
 }

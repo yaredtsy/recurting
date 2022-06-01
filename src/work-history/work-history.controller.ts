@@ -13,12 +13,14 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiTags } from '@nestjs/swagger';
 import { CreatWorkDetailDto } from './dtos/create-work-history.dto';
 import { UpdateWorkDetailDto } from './dtos/update-work-history.dto';
 
 import { WorkHistoryService } from './work-history.service';
 
 @Controller('work-history')
+@ApiTags('work-history')
 @UseGuards(AuthGuard())
 export class WorkHistoryController {
   constructor(private readonly workHistoryService: WorkHistoryService) {}

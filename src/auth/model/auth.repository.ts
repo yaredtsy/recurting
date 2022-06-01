@@ -58,4 +58,13 @@ export class UserRepository extends Repository<User> {
     delete user.password;
     return user;
   }
+
+  removeRealtedFiled(user: User) {
+    delete user.userDetails;
+    delete user.workHistory;
+    delete user.skill;
+    delete user.education;
+
+    return user;
+  }
 }

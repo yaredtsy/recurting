@@ -9,13 +9,18 @@ import {
   Post,
   Req,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { CreateEducationDto } from './dtos/create-education.dtos';
+import { ApiTags } from '@nestjs/swagger';
+import { CreateEducationDto } from './dtos/create-education.dto';
+import { UpdateEducationDto } from './dtos/update-education.dto';
 import { EducationService } from './education.service';
 
 @Controller('education')
-@UseGuards(AuthGuard)
+@ApiTags('education')
+@UseGuards(AuthGuard())
 export class EducationController {
   constructor(private educationService: EducationService) {}
 
@@ -25,15 +30,19 @@ export class EducationController {
   }
 
   @Post('')
+  @UsePipes(ValidationPipe)
   creatEducation(@Req() req, @Body() createEducation: CreateEducationDto) {
+    console.log(createEducation);
+
     return this.educationService.createEducation(req.user, createEducation);
   }
 
   @Patch(':id')
+  @UsePipes(ValidationPipe)
   updateEducation(
     @Req() req,
     @Param('id', new ParseIntPipe()) id,
-    @Body() updateEducation: CreateEducationDto,
+    @Body() updateEducation: UpdateEducationDto,
   ) {
     return this.educationService.updateEducation(req.user, id, updateEducation);
   }

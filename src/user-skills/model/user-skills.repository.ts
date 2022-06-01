@@ -6,7 +6,7 @@ import {
 import { User } from 'src/auth/model/auth.entity';
 import { Skill } from 'src/skills/model/skills.entity';
 import { EntityRepository, Repository } from 'typeorm';
-import { CreateUserSkillDto } from '../dtos/create-user-skill.dtos';
+import { CreateUserSkillDto } from '../dtos/create-user-skill.dto';
 import { UserSkill } from './user-skills.entity';
 
 @EntityRepository(UserSkill)
@@ -24,9 +24,7 @@ export class UserSkillRepository extends Repository<UserSkill> {
   async createUserSkill(user: User, createUserSkill: CreateUserSkillDto) {
     try {
       const skill = await Skill.findOne({ id: createUserSkill.skill });
-      // if (!skill) {
-      //   throw new NotFoundException('skill doesnt exists');
-      // }
+
       const userSkill = await UserSkill.create({
         user: user,
         skill: skill,
@@ -41,9 +39,6 @@ export class UserSkillRepository extends Repository<UserSkill> {
         throw new InternalServerErrorException();
       }
     }
-
-    // user.skill.push(...userskills);
-    // await user.save();
   }
 
   async updateUserSkill(
@@ -52,6 +47,7 @@ export class UserSkillRepository extends Repository<UserSkill> {
     createUserSkill: CreateUserSkillDto,
   ) {
     const skill = await Skill.findOne({ id: createUserSkill.skill });
+
     try {
       const userskill = await UserSkill.update(
         { user: user, id: id },

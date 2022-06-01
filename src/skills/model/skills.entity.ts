@@ -20,7 +20,7 @@ export class Skill extends BaseEntity {
   @Column({ nullable: false, unique: true })
   name: string;
 
-  @OneToMany(() => UserSkill, (userSkill) => userSkill.skill)
+  @OneToMany(() => UserSkill, (userSkill) => userSkill.skill, { eager: false })
   @JoinColumn()
   userSkill: UserSkill[];
 

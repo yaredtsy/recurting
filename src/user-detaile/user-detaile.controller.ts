@@ -13,11 +13,13 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateUserDetaileDto } from './dtos/create-user-detail.dto.';
-import { UpdateUserDetaileDto } from './dtos/update-user-detail.dto';
+import { ApiExtraModels, ApiTags } from '@nestjs/swagger';
+import { CreateUserDetaileDto } from './dto/create-user-detail.dto.';
+import { UpdateUserDetaileDto } from './dto/update-user-detail.dto';
 import { CloudinarystorageProvider } from './providers/cloudinary.provider';
 import { UserDetaileService } from './user-detaile.service';
-
+@ApiExtraModels(CreateUserDetaileDto)
+@ApiTags('User Detaile')
 @Controller('user-detaile')
 @UseGuards(AuthGuard())
 export class UserDetaileController {
@@ -30,10 +32,13 @@ export class UserDetaileController {
 
   @Post('')
   @UsePipes(ValidationPipe)
-  createUserDetail(@Req() req, @Body() createUserDetail: CreateUserDetaileDto) {
+  createUserDetail(
+    @Req() req,
+    @Body() createUserDetailDto: CreateUserDetaileDto,
+  ) {
     return this.userdetaileService.createUserDetaile(
       req.user,
-      createUserDetail,
+      createUserDetailDto,
     );
   }
 

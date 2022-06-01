@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/model/auth.entity';
-import { CreateUserSkillDto } from './dtos/create-user-skill.dtos';
+import { CreateUserSkillDto } from './dtos/create-user-skill.dto';
 import { UserSkillRepository } from './model/user-skills.repository';
 
 @Injectable()

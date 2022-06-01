@@ -14,10 +14,12 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { CreateUserSkillDto } from './dtos/create-user-skill.dtos';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { CreateUserSkillDto } from './dtos/create-user-skill.dto';
 import { UserSkillsService } from './user-skills.service';
 
 @Controller('user-skills')
+@ApiTags('user-skills')
 @UseGuards(AuthGuard())
 export class UserSkillsController {
   constructor(private userSkillsService: UserSkillsService) {}
@@ -38,6 +40,7 @@ export class UserSkillsController {
   }
 
   @Patch(':id')
+  @ApiParam({ name: 'id', type: Number })
   @UsePipes(ValidationPipe)
   updateUserSKill(
     @Req() req,
@@ -52,6 +55,7 @@ export class UserSkillsController {
   }
 
   @Delete(':id')
+  @ApiParam({ name: 'id' })
   @UsePipes(ValidationPipe)
   deleteUserSkill(@Req() req, @Param('id', new ParseIntPipe()) id) {
     return this.deleteUserSkill(req.user, id);

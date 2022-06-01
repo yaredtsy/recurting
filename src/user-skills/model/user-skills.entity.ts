@@ -19,7 +19,10 @@ export class UserSkill extends BaseEntity {
   @Column({ nullable: false })
   yearsOfExperience: number;
 
-  @ManyToOne(() => Skill, (skill) => skill.userSkill, { nullable: false })
+  @ManyToOne(() => Skill, (skill) => skill.userSkill, {
+    nullable: false,
+    eager: true,
+  })
   @JoinColumn()
   skill: Skill;
 
