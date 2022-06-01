@@ -55,7 +55,7 @@ export class UserSkillsController {
   }
 
   @Delete(':id')
-  @ApiParam({ name: 'id' })
+  @ApiParam({ name: 'id', type: Number })
   @UsePipes(ValidationPipe)
   deleteUserSkill(@Req() req, @Param('id', new ParseIntPipe()) id) {
     return this.deleteUserSkill(req.user, id);

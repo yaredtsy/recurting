@@ -13,7 +13,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateEducationDto } from './dtos/create-education.dto';
 import { UpdateEducationDto } from './dtos/update-education.dto';
 import { EducationService } from './education.service';
@@ -39,6 +39,7 @@ export class EducationController {
 
   @Patch(':id')
   @UsePipes(ValidationPipe)
+  @ApiParam({ name: 'id', type: Number })
   updateEducation(
     @Req() req,
     @Param('id', new ParseIntPipe()) id,
@@ -48,6 +49,7 @@ export class EducationController {
   }
 
   @Delete(':id')
+  @ApiParam({ name: 'id', type: Number })
   deleteEducation(@Req() req, @Param('id', new ParseIntPipe()) id) {
     return this.educationService.deleteEducation(req.user, id);
   }

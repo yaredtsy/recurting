@@ -13,7 +13,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreatWorkDetailDto } from './dtos/create-work-history.dto';
 import { UpdateWorkDetailDto } from './dtos/update-work-history.dto';
 
@@ -40,6 +40,7 @@ export class WorkHistoryController {
   }
 
   @Patch(':id')
+  @ApiParam({ name: 'id', type: Number })
   @UsePipes(ValidationPipe)
   updateWorkHistory(
     @Param('id', new ParseIntPipe()) id,
@@ -54,6 +55,7 @@ export class WorkHistoryController {
   }
 
   @Delete(':id')
+  @ApiParam({ name: 'id', type: Number })
   deleteWorkHistory(@Param('id', new ParseIntPipe()) id, @Req() req) {
     return this.workHistoryService.deleteWorkHistory(req.user, id);
   }

@@ -13,12 +13,12 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiExtraModels, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDetaileDto } from './dto/create-user-detail.dto.';
 import { UpdateUserDetaileDto } from './dto/update-user-detail.dto';
 import { CloudinarystorageProvider } from './providers/cloudinary.provider';
 import { UserDetaileService } from './user-detaile.service';
-@ApiExtraModels(CreateUserDetaileDto)
+
 @ApiTags('User Detaile')
 @Controller('user-detaile')
 @UseGuards(AuthGuard())

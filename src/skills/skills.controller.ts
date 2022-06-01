@@ -10,7 +10,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateSkillDto } from './dtos/create-skill.dto';
 import { SkillsService } from './skills.service';
 
@@ -32,6 +32,7 @@ export class SkillsController {
 
   @Patch(':id')
   @UsePipes(ValidationPipe)
+  @ApiParam({ name: 'id', type: Number })
   updateSkill(
     @Param('id', new ParseIntPipe()) id: number,
     @Body() createSkillDto: CreateSkillDto,
@@ -40,6 +41,7 @@ export class SkillsController {
   }
 
   @Delete(':id')
+  @ApiParam({ name: 'id', type: Number })
   deleteSkill(@Param('id') id) {
     return this.skillsService.deleteSkill(id);
   }
