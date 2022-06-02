@@ -1,5 +1,5 @@
 import { UserSkill } from 'src/user-skills/model/user-skills.entity';
-import { WorkHistory } from 'src/work-history/model/work-history.enity';
+import { WorkHistory } from 'src/work-history/model/work-history.entity';
 import {
   BaseEntity,
   Column,

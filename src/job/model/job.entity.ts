@@ -2,6 +2,7 @@ import { Company } from 'src/company/model/company.entity';
 import {
   BaseEntity,
   Column,
+  Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -18,7 +19,7 @@ export enum JobStatus {
   COMPLETED = 'COMPLETED',
   CLOSED = 'CLOSED',
 }
-
+@Entity()
 export class Job extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

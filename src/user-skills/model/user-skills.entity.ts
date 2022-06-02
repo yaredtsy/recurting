@@ -1,5 +1,5 @@
 import { User } from 'src/auth/model/auth.entity';
-import { Skill } from 'src/skills/model/skills.entity';
+import { Skill } from 'src/skills/model/skill.entity';
 import {
   BaseEntity,
   Column,
