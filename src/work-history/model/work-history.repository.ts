@@ -1,10 +1,10 @@
 import { NotFoundException } from '@nestjs/common';
 import { User } from 'src/auth/model/auth.entity';
-import { Skill } from 'src/skills/model/skills.entity';
+import { Skill } from 'src/skills/model/skill.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { CreatWorkDetailDto } from '../dtos/create-work-history.dto';
 import { UpdateWorkDetailDto } from '../dtos/update-work-history.dto';
-import { WorkHistory } from './work-history.enity';
+import { WorkHistory } from './work-history.entity';
 
 @EntityRepository(WorkHistory)
 export class WorkHistoryRepository extends Repository<WorkHistory> {

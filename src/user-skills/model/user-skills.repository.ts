@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { User } from 'src/auth/model/auth.entity';
-import { Skill } from 'src/skills/model/skills.entity';
+import { Skill } from 'src/skills/model/skill.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { CreateUserSkillDto } from '../dtos/create-user-skill.dto';
 import { UserSkill } from './user-skills.entity';

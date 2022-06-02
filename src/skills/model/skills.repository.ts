@@ -4,7 +4,7 @@ import {
 } from '@nestjs/common';
 import { DeleteResult, EntityRepository, Repository } from 'typeorm';
 import { CreateSkillDto } from '../dtos/create-skill.dto';
-import { Skill } from './skills.entity';
+import { Skill } from './skill.entity';
 
 @EntityRepository(Skill)
 export class SkillRepository extends Repository<Skill> {
