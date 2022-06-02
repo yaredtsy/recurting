@@ -9,8 +9,10 @@ import { UserSkillsModule } from './user-skills/user-skills.module';
 import { EducationModule } from './education/education.module';
 import { JobModule } from './job/job.module';
 import { CompanyModule } from './company/company.module';
+import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot(typeOrmConfig),
     AuthModule,
     UserDetaileModule,
