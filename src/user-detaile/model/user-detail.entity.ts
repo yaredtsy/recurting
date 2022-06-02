@@ -30,6 +30,9 @@ export class UserDetaile extends BaseEntity {
   professionalSummary: string;
 
   @Column({ nullable: true })
+  title: string;
+
+  @Column({ nullable: true })
   image: string;
 
   @Column({ nullable: true })

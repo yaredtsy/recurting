@@ -10,6 +10,9 @@ export class UpdateUserDetaileDto {
   @IsString()
   professionalSummary: string;
 
+  @IsString()
+  title: string;
+
   @IsPhoneNumber('ET')
   phone: string;
 

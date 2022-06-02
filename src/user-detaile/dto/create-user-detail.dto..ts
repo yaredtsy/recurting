@@ -20,6 +20,14 @@ export class CreateUserDetaileDto {
   @IsString()
   professionalSummary: string;
 
+  @ApiProperty({
+    type: String,
+    description: ' user title',
+    required: false,
+  })
+  @IsString()
+  title: string;
+
   @ApiProperty({ type: String, description: ' phone number', required: false })
   @IsPhoneNumber('ET')
   phone: string;

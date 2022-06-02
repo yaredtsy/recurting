@@ -8,6 +8,7 @@ import { SkillsModule } from './skills/skills.module';
 import { UserSkillsModule } from './user-skills/user-skills.module';
 import { EducationModule } from './education/education.module';
 import { JobModule } from './job/job.module';
+import { CompanyModule } from './company/company.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig),
@@ -18,6 +19,7 @@ import { JobModule } from './job/job.module';
     UserSkillsModule,
     EducationModule,
     JobModule,
+    CompanyModule,
   ],
 })
 export class AppModule {}

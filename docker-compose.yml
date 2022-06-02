@@ -10,8 +10,8 @@ services:
     ports:
       - '5433:5432'
     environment:
-      POSTGRES_PASSWORD: 'ruka1234'
-      POSTGRES_USER: 'ruka'
+      POSTGRES_PASSWORD: 'root'
+      POSTGRES_USER: 'postgres'
     volumes:
       - data:/var/lib/postgresql/data
 volumes:
