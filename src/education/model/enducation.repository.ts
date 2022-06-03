@@ -35,7 +35,7 @@ export class EducationRepository extends Repository<Education> {
     );
     if (result.affected == 0)
       throw new NotFoundException('Education not found');
-    return result;
+    return await Education.findOne(id);
   }
 
   async deleteEducation(user: User, id: number) {

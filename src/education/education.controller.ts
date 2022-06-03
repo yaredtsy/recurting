@@ -13,13 +13,14 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateEducationDto } from './dtos/create-education.dto';
 import { UpdateEducationDto } from './dtos/update-education.dto';
 import { EducationService } from './education.service';
 
 @Controller('education')
 @ApiTags('education')
+@ApiBearerAuth()
 @UseGuards(AuthGuard())
 export class EducationController {
   constructor(private educationService: EducationService) {}

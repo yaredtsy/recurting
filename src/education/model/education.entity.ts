@@ -26,8 +26,7 @@ export class Education extends BaseEntity {
   colleage: string;
 
   @ManyToOne((type) => User, (user) => user.education, {
-    eager: false,
-    nullable: false,
+    nullable: true,
   })
   @JoinColumn()
   user: User;

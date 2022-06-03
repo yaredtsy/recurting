@@ -30,6 +30,7 @@ export class UserDetaileRepository extends Repository<UserDetaile> {
       { user: user },
       { image: path },
     );
-    if (userdetail.affected > 0) return user.userDetails;
+    if (userdetail.affected > 0)
+      return await UserDetaile.findOne({ user: user });
   }
 }

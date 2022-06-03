@@ -7,16 +7,12 @@
         "username": "postgres",
         "password": "root",
         "database": "rhuk",
-        "entities": ["dist/**/*.entity{ .ts,.js}"],
-        
-        "migrations": ["dist/migrations/**/*{.ts,.js}"],
-        "migrationsTableName": "migrations_history",
-        "migrationsRun": true,
-  
-       "subscribers": [
-          "dist/subscriber/**/*{.ts,.js}"
-       ]
+
        
-        
+       "entities": ["dist/**/*.entity{ .ts,.js}"],
+       "synchronize": false,
+       "migrations": ["dist/migrations/*{.ts,.js}"],
+       "migrationsTableName": "migrations_typeorm",
+       "migrationsRun": true
       }
 ]

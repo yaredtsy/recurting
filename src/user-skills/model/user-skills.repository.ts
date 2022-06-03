@@ -47,9 +47,9 @@ export class UserSkillRepository extends Repository<UserSkill> {
     createUserSkill: CreateUserSkillDto,
   ) {
     const skill = await Skill.findOne({ id: createUserSkill.skill });
-
+    if (!skill) throw new NotFoundException(' skill not found');
     try {
-      const userskill = await UserSkill.update(
+      const result = await UserSkill.update(
         { user: user, id: id },
         {
           skill: skill,
@@ -57,8 +57,16 @@ export class UserSkillRepository extends Repository<UserSkill> {
         },
       );
 
-      return userskill;
+      if (result.affected == 0)
+        throw new NotFoundException('user skill not founs');
+
+      return await UserSkill.findOne(id);
     } catch (err) {
+      console.log(err);
+
+      if (err.status == '404') {
+        throw new NotFoundException('user skill not founs');
+      }
       if (err.code === '23505') {
         throw new ConflictException('skill alerady exists');
       } else {
