@@ -12,7 +12,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dtos/create-company.dto';
 
@@ -28,6 +28,7 @@ export class CompanyController {
 
   @Post('')
   @UseGuards(AuthGuard())
+  @ApiBearerAuth()
   @UsePipes(ValidationPipe)
   createCompany(@Body() createCompany: CreateCompanyDto) {
     return this.companyService.createCompany(createCompany);
@@ -36,6 +37,7 @@ export class CompanyController {
   @Patch(':id')
   @ApiParam({ name: 'id', type: Number })
   @UseGuards(AuthGuard())
+  @ApiBearerAuth()
   @UsePipes(ValidationPipe)
   updateCompany(
     @Param('id', new ParseIntPipe()) id: number,
@@ -47,6 +49,7 @@ export class CompanyController {
   @Delete(':id')
   @ApiParam({ name: 'id', type: Number })
   @UseGuards(AuthGuard())
+  @ApiBearerAuth()
   deleteCompany(@Param('id', new ParseIntPipe()) id: number) {
     return this.companyService.deleteCompany(id);
   }

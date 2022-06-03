@@ -25,9 +25,6 @@ export class Job extends BaseEntity {
   id: number;
 
   @Column()
-  companyName: string;
-
-  @Column()
   role: string;
 
   @Column()
@@ -45,7 +42,10 @@ export class Job extends BaseEntity {
   @Column({ type: 'enum', enum: JobStatus, default: JobStatus.OPEN })
   status: JobStatus;
 
-  @ManyToOne((type) => Company, (company) => company.job)
+  @ManyToOne((type) => Company, (company) => company.job, {
+    eager: true,
+    nullable: false,
+  })
   @JoinColumn()
   company: Company;
 }

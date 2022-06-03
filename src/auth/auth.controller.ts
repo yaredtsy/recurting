@@ -13,7 +13,7 @@ import { User } from './model/auth.entity';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { GetUser } from './get-user.decorater';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
 @ApiTags('Authentication')
@@ -42,8 +42,9 @@ export class AuthController {
   }
 
   @Get('test')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard())
-  test(@Req() req) {
-    return req.user;
+  async test(@Req() req) {
+    return await User.findOne({ id: req.user.id });
   }
 }

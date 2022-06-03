@@ -38,10 +38,14 @@ export class UserSkillsService {
     id: number,
     createUserSkill: CreateUserSkillDto,
   ) {
-    return await this.updateUserSKill(user, id, createUserSkill);
+    return await this.userSkillRepository.updateUserSkill(
+      user,
+      id,
+      createUserSkill,
+    );
   }
 
   async deleteUserSkill(user: User, id: number) {
-    return await this.deleteUserSkill(user, id);
+    return await this.userSkillRepository.deleteUserSkill(user, id);
   }
 }

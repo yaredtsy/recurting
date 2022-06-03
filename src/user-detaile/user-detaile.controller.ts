@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateUserDetaileDto } from './dto/create-user-detail.dto.';
 import { UpdateUserDetaileDto } from './dto/update-user-detail.dto';
 import { CloudinarystorageProvider } from './providers/cloudinary.provider';
@@ -21,6 +21,7 @@ import { UserDetaileService } from './user-detaile.service';
 
 @ApiTags('User Detaile')
 @Controller('user-detaile')
+@ApiBearerAuth()
 @UseGuards(AuthGuard())
 export class UserDetaileController {
   constructor(private readonly userdetaileService: UserDetaileService) {}
