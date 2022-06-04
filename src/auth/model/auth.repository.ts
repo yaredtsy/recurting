@@ -5,6 +5,10 @@ import {
 import { EntityRepository, Repository } from 'typeorm';
 import { User } from './auth.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
+import * as bcrypt from 'bcrypt';
+import { AdminLoginDto } from '../dto/admin-login.dto';
+import { use } from 'passport';
+import { Role } from './role.enum';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -66,5 +70,43 @@ export class UserRepository extends Repository<User> {
     delete user.education;
 
     return user;
+  }
+
+  // loginAdmin(adminLoginDto: AdminLoginDto) {}
+
+  async signup(adminLoginDto: AdminLoginDto) {
+    const user = new User();
+    user.email = adminLoginDto.email;
+
+    const salt = await bcrypt.genSalt();
+    user.password = await this.hasPassword(adminLoginDto.password, salt);
+    user.salt = salt;
+
+    user.role = Role.ADMIN;
+
+    try {
+      await user.save();
+    } catch (error) {
+      if (error.code === '23505')
+        throw new ConflictException('Email alerady exists');
+      else {
+        throw new InternalServerErrorException();
+      }
+    }
+  }
+
+  private async hasPassword(password: string, salt: string): Promise<string> {
+    return bcrypt.hash(password, salt);
+  }
+
+  async validateUserPassword(adminLoginDto: AdminLoginDto): Promise<string> {
+    const { email, password } = adminLoginDto;
+    const user = await this.findOne({ email });
+
+    if (user && (await user.validatePassword(password))) {
+      return user.email;
+    } else {
+      return null;
+    }
   }
 }

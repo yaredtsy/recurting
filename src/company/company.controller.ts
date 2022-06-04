@@ -13,6 +13,9 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/auth/decorator/role.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Role } from 'src/auth/model/role.enum';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dtos/create-company.dto';
 
@@ -27,9 +30,10 @@ export class CompanyController {
   }
 
   @Post('')
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiBearerAuth()
   @UsePipes(ValidationPipe)
+  @Roles(Role.ADMIN)
   createCompany(@Body() createCompany: CreateCompanyDto) {
     return this.companyService.createCompany(createCompany);
   }

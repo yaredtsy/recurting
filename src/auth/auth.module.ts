@@ -7,6 +7,7 @@ import { UserRepository } from './model/auth.repository';
 import { AuthService } from './auth.service';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     TypeOrmModule.forFeature([UserRepository]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, GoogleStrategy],
-  exports: [JwtStrategy, PassportModule, GoogleStrategy],
+  providers: [AuthService, JwtStrategy, GoogleStrategy, RolesGuard],
+  exports: [JwtStrategy, PassportModule, GoogleStrategy, RolesGuard],
 })
 export class AuthModule {}

@@ -10,6 +10,7 @@ import { EducationModule } from './education/education.module';
 import { JobModule } from './job/job.module';
 import { CompanyModule } from './company/company.module';
 import { ConfigModule } from '@nestjs/config';
+
 @Module({
   imports: [
     ConfigModule.forRoot(),

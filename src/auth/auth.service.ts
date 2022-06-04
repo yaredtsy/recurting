@@ -1,9 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './model/auth.entity';
 import { UserRepository } from './model/auth.repository';
 import { CreateUserDto } from './dto/create-user.dto';
+import { AdminLoginDto } from './dto/admin-login.dto';
+import { Role } from './model/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -15,12 +21,13 @@ export class AuthService {
 
   async googleLogin(req) {
     if (!req.user) {
-      return req.user;
+      throw new UnauthorizedException('');
     }
     const createUserDto = req.user;
     const payload: JwtPayload = { email: createUserDto.email };
+
     let user = await this.userRepository.findOne({
-      email: 'sd',
+      email: createUserDto.email,
     });
 
     const response = {
@@ -36,6 +43,31 @@ export class AuthService {
 
     response.user = this.userRepository.removeRealtedFiled(user);
     response.accessToken = this.jwtService.sign(payload);
+    return response;
+  }
+
+  async adminLogin(adminlogin: AdminLoginDto) {
+    const { email } = adminlogin;
+
+    const user = await this.userRepository.findOne({ email: email });
+
+    if (!user) throw new NotFoundException('Email not found');
+    if (user.role == Role.USER)
+      throw new UnauthorizedException('Online admin can use this account');
+
+    const result = await this.userRepository.validateUserPassword(adminlogin);
+    if (!result) throw new UnauthorizedException('Invalid credentials');
+
+    const response = {
+      isRegister: true,
+      accessToken: '',
+      user: user,
+    };
+
+    const payload: JwtPayload = { email: email };
+
+    response.accessToken = this.jwtService.sign(payload);
+
     return response;
   }
 
