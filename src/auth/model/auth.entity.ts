@@ -12,7 +12,8 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-
+import { Role } from './role.enum';
+import * as bcrypt from 'bcrypt';
 @Entity()
 @Unique(['username'])
 @Unique(['email'])
@@ -26,8 +27,11 @@ export class User extends BaseEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   password: string;
+
+  @Column({ nullable: true })
+  salt: string;
 
   @OneToOne(() => UserDetaile, (userDetaile) => userDetaile.user, {
     eager: true,
@@ -35,6 +39,9 @@ export class User extends BaseEntity {
   })
   @JoinColumn({ name: 'userDetails' })
   userDetails: UserDetaile;
+
+  @Column({ type: 'enum', enum: Role, default: Role.USER })
+  role: Role;
 
   @OneToMany((type) => WorkHistory, (workHistory) => workHistory.user, {
     eager: true,
@@ -53,4 +60,9 @@ export class User extends BaseEntity {
     eager: true,
   })
   education: Education;
+
+  async validatePassword(password: string): Promise<boolean> {
+    const hash = await bcrypt.hash(password, this.salt);
+    return hash === this.password;
+  }
 }
