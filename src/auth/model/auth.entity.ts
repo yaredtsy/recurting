@@ -7,6 +7,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -14,6 +15,7 @@ import {
 } from 'typeorm';
 import { Role } from './role.enum';
 import * as bcrypt from 'bcrypt';
+import { AssignedUser } from 'src/job/model/assigned-user.entity';
 @Entity()
 @Unique(['username'])
 @Unique(['email'])
@@ -60,6 +62,9 @@ export class User extends BaseEntity {
     eager: true,
   })
   education: Education;
+
+  @OneToMany((type) => AssignedUser, (assignedUsers) => assignedUsers.user)
+  assignedCompany: AssignedUser[];
 
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);

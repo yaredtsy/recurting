@@ -41,4 +41,17 @@ export class JobRepository extends Repository<Job> {
 
     return result;
   }
+
+  async getUserWithCandidate(jobId: number) {
+    const job = await Job.createQueryBuilder('job')
+      .leftJoinAndSelect('job.assignedUsers', 'assignedUser')
+      .leftJoinAndSelect(
+        'assignedUser.user',
+        'user',
+        'assignedUser.userId = user.id',
+      )
+      .where('job.id = :jobId', { jobId })
+      .getOne();
+    return job;
+  }
 }

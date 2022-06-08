@@ -5,8 +5,10 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { AssignedUser } from './assigned-user.entity';
 
 export enum ProficiencyType {
   BEGINNER = 'BEGINNER',
@@ -41,6 +43,9 @@ export class Job extends BaseEntity {
 
   @Column({ type: 'enum', enum: JobStatus, default: JobStatus.OPEN })
   status: JobStatus;
+
+  @OneToMany((type) => AssignedUser, (assignedUsers) => assignedUsers.job)
+  assignedUsers: AssignedUser[];
 
   @ManyToOne((type) => Company, (company) => company.job, {
     eager: true,
