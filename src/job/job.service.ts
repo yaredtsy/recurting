@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { paginate, PaginateQuery } from 'nestjs-paginate';
+import { FilterOperator, paginate, PaginateQuery } from 'nestjs-paginate';
 
 import { User } from 'src/auth/model/auth.entity';
 import { In } from 'typeorm';
@@ -22,11 +22,16 @@ export class JobService {
     private assignUserRepository: AssignedUserRepository,
   ) {}
 
-  async getJobs(user: User | null) {
-    if (user) {
-      console.log('loged in successfully');
-    }
-    return await this.jobRepository.getJob();
+  async getJobs(query: PaginateQuery) {
+    return paginate(query, this.jobRepository, {
+      sortableColumns: ['created_at', 'id'],
+      searchableColumns: ['jobType', 'role'],
+      defaultSortBy: [['created_at', 'DESC']],
+      relations: ['skills'],
+      filterableColumns: {
+        'skills.name': [FilterOperator.IN],
+      },
+    });
   }
 
   async createJobs(createUserDto: CreateJobDto) {
