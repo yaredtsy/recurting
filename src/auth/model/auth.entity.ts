@@ -4,6 +4,7 @@ import { UserSkill } from 'src/user-skills/model/user-skills.entity';
 import { WorkHistory } from 'src/work-history/model/work-history.entity';
 import {
   BaseEntity,
+  BeforeInsert,
   Column,
   Entity,
   JoinColumn,
@@ -29,7 +30,7 @@ export class User extends BaseEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column({ nullable: true, select: false })
+  @Column({ nullable: false })
   password: string;
 
   @Column({ nullable: true })
@@ -66,8 +67,19 @@ export class User extends BaseEntity {
   @OneToMany((type) => AssignedUser, (assignedUsers) => assignedUsers.user)
   assignedCompany: AssignedUser[];
 
+  @BeforeInsert()
+  async setPassword(password: string) {
+    this.salt = await bcrypt.genSalt();
+
+    this.password = await bcrypt.hash(password || this.password, this.salt);
+  }
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);
-    return hash === this.password;
+    const bb = bcrypt.compareSync(password, this.password);
+    console.log(bb);
+
+    console.log(this.email);
+
+    return hash == this.password;
   }
 }

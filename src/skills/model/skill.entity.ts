@@ -1,3 +1,4 @@
+import { Job } from 'src/job/model/job.entity';
 import { UserSkill } from 'src/user-skills/model/user-skills.entity';
 import { WorkHistory } from 'src/work-history/model/work-history.entity';
 import {
@@ -5,6 +6,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -26,4 +28,7 @@ export class Skill extends BaseEntity {
 
   @ManyToMany(() => WorkHistory, (workeHistory) => workeHistory.skills)
   workHistory: WorkHistory[];
+
+  @ManyToMany(() => Job, (job) => job.skills)
+  job: Job[];
 }

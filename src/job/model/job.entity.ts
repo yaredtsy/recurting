@@ -1,12 +1,18 @@
+import { type } from 'os';
 import { Company } from 'src/company/model/company.entity';
+import { Skill } from 'src/skills/model/skill.entity';
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { AssignedUser } from './assigned-user.entity';
 
@@ -38,6 +44,12 @@ export class Job extends BaseEntity {
   @Column()
   amountOfUser: number;
 
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
   @Column({ type: 'enum', enum: ProficiencyType })
   proficiency: ProficiencyType;
 
@@ -53,4 +65,8 @@ export class Job extends BaseEntity {
   })
   @JoinColumn()
   company: Company;
+
+  @ManyToMany((type) => Skill, (skill) => skill.job)
+  @JoinTable()
+  skills: Skill[];
 }

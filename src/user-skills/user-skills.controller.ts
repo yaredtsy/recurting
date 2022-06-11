@@ -14,7 +14,12 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateUserSkillDto } from './dtos/create-user-skill.dto';
 import { UserSkillsService } from './user-skills.service';
 
@@ -26,12 +31,17 @@ export class UserSkillsController {
   constructor(private userSkillsService: UserSkillsService) {}
 
   @Get('')
+  @UseGuards(AuthGuard())
   getUserSkill(@Req() req) {
     return this.userSkillsService.getUserSkill(req.user);
   }
 
+  @ApiOperation({
+    summary: 'get job list recommend for users',
+    description: 'description is good',
+  })
+  @UseGuards(AuthGuard())
   @Post('')
-  // @UsePipes(ParseArrayPipe)
   createUserSkill(
     @Req() req,
     @Body(new ParseArrayPipe({ items: CreateUserSkillDto }))
@@ -56,9 +66,12 @@ export class UserSkillsController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard())
   @ApiParam({ name: 'id', type: Number })
   @UsePipes(ValidationPipe)
   deleteUserSkill(@Req() req, @Param('id', new ParseIntPipe()) id) {
-    return this.deleteUserSkill(req.user, id);
+    console.log(req.user);
+
+    return this.userSkillsService.deleteUserSkill(req.user, id);
   }
 }
