@@ -10,6 +10,7 @@ import { EducationModule } from './education/education.module';
 import { JobModule } from './job/job.module';
 import { CompanyModule } from './company/company.module';
 import { ConfigModule } from '@nestjs/config';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ConfigModule } from '@nestjs/config';
     EducationModule,
     JobModule,
     CompanyModule,
+    DatabaseModule,
   ],
 })
 export class AppModule {}

@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
   UsePipes,
@@ -17,6 +18,7 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorator/role.decorator';
@@ -26,14 +28,40 @@ import { AsiggnUsersDto } from './dtos/assign-users.dto';
 import { CreateJobDto } from './dtos/create-jobs.dto';
 import { UpdateJobDto } from './dtos/update-job.dto';
 import { JobService } from './job.service';
+import { JobFilterDto } from './dtos/job-filter.dto';
+import { Paginate, PaginateQuery } from 'nestjs-paginate';
 
 @Controller('job')
 @ApiTags('Jobs')
 export class JobController {
   constructor(private jobsService: JobService) {}
+
   @Get('')
-  getJobs(@Req() req) {
-    return this.jobsService.getJobs(req.user);
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'limit', type: Number, required: false })
+  @ApiQuery({ name: 'sortBy', type: [String], required: false })
+  @ApiQuery({ name: 'searchBy', type: [String], required: false })
+  @ApiQuery({ name: 'search', type: String, required: false })
+  getJobs(@Query('limit') limit: number, @Paginate() query: PaginateQuery) {
+    return this.jobsService.paginate(query);
+  }
+
+  // @Get('related')
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard)
+  // @UsePipes(ValidationPipe)
+  // getUserRealtedJob(
+  //   @Query('page', new ParseIntPipe()) page: number,
+  //   @Query('limit', new ParseIntPipe()) limit: number,
+  //   @Query() jobFilterDto: JobFilterDto,
+  // ) {}
+
+  @Get('related')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Roles(Role.USER)
+  getUserRelatedJob(@Req() req, @Paginate() query: PaginateQuery) {
+    return this.jobsService.getUserRelatedJob(req.user, query);
   }
 
   @Post('')

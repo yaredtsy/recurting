@@ -2,7 +2,9 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+
 import { Company } from 'src/company/model/company.entity';
+import { Skill } from 'src/skills/model/skill.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { CreateJobDto } from '../dtos/create-jobs.dto';
 import { UpdateJobDto } from '../dtos/update-job.dto';
@@ -14,17 +16,25 @@ export class JobRepository extends Repository<Job> {
     return await Job.find();
   }
   async createJob(createJob: CreateJobDto) {
-    console.log(createJob);
-
     const company = await Company.findOne({ id: createJob.companyId });
+    const skills = [];
+    for (let i = 0; i < createJob.skills.length; i++) {
+      const skill = await Skill.findOne({ id: createJob.skills[i] });
+      if (!skill) throw new NotFoundException('Skill not found');
+      skills.push(skill);
+    }
+
     if (!company) throw new NotFoundException('Company not found');
     try {
-      const job = await Job.create({
+      const job = Job.create({
         company: company,
         proficiency: createJob.proficiencyType,
         status: JobStatus.OPEN,
+        skills: skills,
         ...createJob,
-      }).save();
+      });
+      job.skills = skills;
+      await job.save();
       return job;
     } catch (error) {
       throw new InternalServerErrorException();

@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -31,4 +32,8 @@ export class CreateJobDto {
   @IsNotEmpty()
   @IsEnum(ProficiencyType)
   proficiencyType: ProficiencyType;
+
+  @IsNotEmpty()
+  @IsArray()
+  skills: [];
 }

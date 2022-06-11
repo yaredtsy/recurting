@@ -76,6 +76,8 @@ export class UserSkillRepository extends Repository<UserSkill> {
   }
 
   async deleteUserSkill(user: User, id: number) {
+    console.log(user);
+
     const result = await UserSkill.delete({ user: user, id: id });
     return result.affected;
   }

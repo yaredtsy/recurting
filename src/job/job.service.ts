@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { paginate, PaginateQuery } from 'nestjs-paginate';
+
 import { User } from 'src/auth/model/auth.entity';
+import { In } from 'typeorm';
 import { AsiggnUsersDto } from './dtos/assign-users.dto';
 import { CreateJobDto } from './dtos/create-jobs.dto';
+import { JobFilterDto } from './dtos/job-filter.dto';
 
 import { UpdateJobDto } from './dtos/update-job.dto';
 import { AssignedUser } from './model/assigned-user.entity';
@@ -49,5 +53,34 @@ export class JobService {
 
   async getAssignedUser(jobId: number) {
     return this.jobRepository.getUserWithCandidate(jobId);
+  }
+
+  async paginate(query: PaginateQuery) {
+    const queryBuilder = Job.createQueryBuilder('job').leftJoinAndSelect(
+      'job.skills',
+      'skills',
+    );
+    return paginate(query, queryBuilder, {
+      sortableColumns: ['created_at', 'id'],
+      searchableColumns: ['jobType', 'role'],
+      defaultSortBy: [['created_at', 'DESC']],
+    });
+  }
+
+  async getUserRelatedJob(user: User, query: PaginateQuery) {
+    if (user.skill.length > 0) {
+      const userSkills = user.skill.map((skill) => skill.skill.id);
+      const queryBuilder = Job.createQueryBuilder('job')
+        .leftJoinAndSelect('job.skills', 'skill')
+        .where('skill.id IN (:...skills)', { skills: userSkills })
+        .orderBy('job.created_at');
+
+      return paginate(query, queryBuilder, {
+        sortableColumns: ['created_at', 'id'],
+        searchableColumns: ['jobType', 'role'],
+        defaultSortBy: [['created_at', 'DESC']],
+      });
+    }
+    return [];
   }
 }

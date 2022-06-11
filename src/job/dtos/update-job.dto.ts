@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -8,26 +9,35 @@ import {
 import { JobStatus, ProficiencyType } from '../model/job.entity';
 
 export class UpdateJobDto {
-  @IsNotEmpty()
+  @IsOptional()
+  @IsNumber()
+  companyId: number;
+
+  @IsOptional()
   @IsString()
   companyName: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   role: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   description: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   amountOfUser: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(ProficiencyType)
   proficiencyType: ProficiencyType;
 
+  @IsOptional()
   @IsEnum(JobStatus)
   status: JobStatus;
+
+  @IsOptional()
+  @IsArray()
+  skills: [];
 }
