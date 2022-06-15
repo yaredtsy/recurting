@@ -3,7 +3,9 @@ import {
   Controller,
   Get,
   Post,
+  Redirect,
   Req,
+  Res,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -34,13 +36,14 @@ export class AuthController {
 
   @Get('redirect')
   @UseGuards(AuthGuard('google'))
+  @Redirect('https://lucian.netlify.app/jobs/filter/swift', 200)
   @ApiOperation({
     summary: 'Google Auth',
     description: 'this link is for google auth do not use it',
     deprecated: true,
   })
-  googleAuthRedirect(@Req() req) {
-    return this.authService.googleLogin(req);
+  googleAuthRedirect(@Req() req, @Res() res) {
+    return this.authService.googleLogin(req, res);
   }
 
   @Post('signup')
@@ -66,7 +69,7 @@ export class AuthController {
     return this.authService.adminLogin(adminLogin);
   }
 
-  @Get('test')
+  @Get('getUser')
   @ApiBearerAuth()
   @UseGuards(AuthGuard())
   @ApiOperation({

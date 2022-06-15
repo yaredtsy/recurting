@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty } from 'class-validator';
+import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateUserSkillDto {
   @ApiProperty({ type: Number, description: ' Skill id', required: false })
@@ -15,4 +15,8 @@ export class CreateUserSkillDto {
   @IsNotEmpty()
   @IsInt()
   yearsOfExperience: number;
+
+  @IsNotEmpty()
+  @IsString()
+  proficiency: string;
 }

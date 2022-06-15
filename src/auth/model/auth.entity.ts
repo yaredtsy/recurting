@@ -14,7 +14,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { Role } from './role.enum';
+import { Role, userStatus } from './role.enum';
 import * as bcrypt from 'bcrypt';
 import { AssignedUser } from 'src/job/model/assigned-user.entity';
 @Entity()
@@ -42,6 +42,9 @@ export class User extends BaseEntity {
   })
   @JoinColumn({ name: 'userDetails' })
   userDetails: UserDetaile;
+
+  @Column({ type: 'enum', enum: userStatus, default: userStatus.NOTCOMPLETED })
+  status: userStatus;
 
   @Column({ type: 'enum', enum: Role, default: Role.USER })
   role: Role;

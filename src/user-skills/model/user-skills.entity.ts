@@ -29,4 +29,7 @@ export class UserSkill extends BaseEntity {
   @ManyToOne(() => User, (user) => user.skill)
   @JoinColumn()
   user: User;
+
+  @Column({ nullable: true })
+  proficiency: string;
 }

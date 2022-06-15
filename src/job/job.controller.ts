@@ -43,7 +43,7 @@ export class JobController {
   @ApiQuery({ name: 'searchBy', type: [String], required: false })
   @ApiQuery({ name: 'search', type: String, required: false })
   getJobs(@Query('limit') limit: number, @Paginate() query: PaginateQuery) {
-    return this.jobsService.paginate(query);
+    return this.jobsService.getJobs(query);
   }
 
   // @Get('related')
