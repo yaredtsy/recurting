@@ -55,7 +55,7 @@ export class AuthService {
       console.log('i think it woek');
       // return { s: 'orra' };
       return res.redirect(
-        'http://localhost:3011/login-success/' + response.accessToken,
+        process.env.LOGIN_SUCCESS_REDIRECT_URL + response.accessToken,
       );
     } catch (error) {}
   }
