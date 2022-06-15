@@ -17,7 +17,7 @@ console.log(process.env.NODE_ENV);
 @Module({
   imports: [
     ConfigModule.forRoot({
-      ignoreEnvFile: process.env.NODE_ENV == 'production',
+      ignoreEnvFile: true,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
