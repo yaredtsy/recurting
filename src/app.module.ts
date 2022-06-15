@@ -12,13 +12,9 @@ import { CompanyModule } from './company/company.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 
-console.log(process.env.NODE_ENV);
-
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      ignoreEnvFile: true,
-    }),
+    ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
