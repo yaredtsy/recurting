@@ -9,18 +9,13 @@ import { UserSkillsModule } from './user-skills/user-skills.module';
 import { EducationModule } from './education/education.module';
 import { JobModule } from './job/job.module';
 import { CompanyModule } from './company/company.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        ...typeOrmConfig,
-      }),
-    }),
+    TypeOrmModule.forRoot(typeOrmConfig),
     AuthModule,
     UserDetaileModule,
     WorkHistoryModule,
