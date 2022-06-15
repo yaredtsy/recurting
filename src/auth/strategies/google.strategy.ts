@@ -4,10 +4,9 @@ import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor() {
     super({
-      clientID:
-        '543240628970-aq1grv15u3btcrsfenmvbu3jhhbbm12o.apps.googleusercontent.com',
-      clientSecret: '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',
-      callbackURL: 'http://localhost:3000/auth/redirect',
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_REDIRECT_URL,
       scope: ['email', 'profile'],
     });
   }
