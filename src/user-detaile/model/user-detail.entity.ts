@@ -8,13 +8,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-export enum userStatus {
-  ACTIVE = 'active',
-  NOTCOMPLETED = 'notCompleted',
-  BLOCKED = 'blocked',
-  DEACTIVATED = 'deactivated',
-}
-
 @Entity()
 export class UserDetaile extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -43,9 +36,6 @@ export class UserDetaile extends BaseEntity {
 
   @Column({ nullable: true })
   city: string;
-
-  @Column({ type: 'enum', enum: userStatus, default: userStatus.NOTCOMPLETED })
-  status: userStatus;
 
   @OneToOne(() => User, (user) => user.userDetails, {
     eager: false,

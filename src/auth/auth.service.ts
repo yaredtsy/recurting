@@ -1,6 +1,7 @@
 import {
   Injectable,
   NotFoundException,
+  ResponseDecoratorOptions,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -10,6 +11,7 @@ import { UserRepository } from './model/auth.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AdminLoginDto } from './dto/admin-login.dto';
 import { Role } from './model/role.enum';
+import { UserDetaile } from 'src/user-detaile/model/user-detail.entity';
 
 @Injectable()
 export class AuthService {
@@ -19,31 +21,43 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async googleLogin(req) {
-    if (!req.user) {
-      throw new UnauthorizedException('');
-    }
-    const createUserDto = req.user;
-    const payload: JwtPayload = { email: createUserDto.email };
+  async googleLogin(req, res) {
+    try {
+      if (!req.user) {
+        throw new UnauthorizedException('');
+      }
 
-    let user = await this.userRepository.findOne({
-      email: createUserDto.email,
-    });
+      const createUserDto = req.user;
+      const payload: JwtPayload = { email: createUserDto.email };
 
-    const response = {
-      isRegister: true,
-      accessToken: '',
-      user: {},
-    };
+      let user = await this.userRepository.findOne({
+        email: createUserDto.email,
+      });
 
-    if (!user) {
-      response.isRegister = false;
-      user = await this.userRepository.createUser(createUserDto);
-    }
+      const response = {
+        isRegister: true,
+        accessToken: '',
+        user: {},
+      };
 
-    response.user = this.userRepository.removeRealtedFiled(user);
-    response.accessToken = this.jwtService.sign(payload);
-    return response;
+      if (!user) {
+        response.isRegister = false;
+        user = await this.userRepository.createUser(createUserDto);
+        UserDetaile.create({
+          user: user,
+          firstName: createUserDto.firstName,
+          lastName: createUserDto.lastName,
+        });
+      }
+
+      response.user = this.userRepository.removeRealtedFiled(user);
+      response.accessToken = this.jwtService.sign(payload);
+      console.log('i think it woek');
+      // return { s: 'orra' };
+      return res.redirect(
+        'http://localhost:3011/login-success/' + response.accessToken,
+      );
+    } catch (error) {}
   }
 
   async adminLogin(adminlogin: AdminLoginDto) {
@@ -75,6 +89,8 @@ export class AuthService {
     const newuser = await this.userRepository.createUser({
       email: user.email,
       username: createUserDto.username,
+      firstName: '',
+      lastName: '',
     });
     return newuser;
   }

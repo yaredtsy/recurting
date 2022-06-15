@@ -75,11 +75,16 @@ export class JobService {
   async getUserRelatedJob(user: User, query: PaginateQuery) {
     if (user.skill.length > 0) {
       const userSkills = user.skill.map((skill) => skill.skill.id);
-      const queryBuilder = Job.createQueryBuilder('job')
+      const id = await Job.createQueryBuilder('job')
         .leftJoinAndSelect('job.skills', 'skill')
         .where('skill.id IN (:...skills)', { skills: userSkills })
-        .orderBy('job.created_at');
-
+        .orderBy('job.created_at')
+        .cache(10000)
+        .select('id')
+        .getMany();
+      const queryBuilder = Job.createQueryBuilder('job')
+        .leftJoinAndSelect('job.skills', 'skill')
+        .where('job.id IN (:...ids)', { ids: id });
       return paginate(query, queryBuilder, {
         sortableColumns: ['created_at', 'id'],
         searchableColumns: ['jobType', 'role'],
