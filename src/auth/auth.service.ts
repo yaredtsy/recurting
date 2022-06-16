@@ -52,7 +52,7 @@ export class AuthService {
 
       response.user = this.userRepository.removeRealtedFiled(user);
       response.accessToken = this.jwtService.sign(payload);
-      console.log('i think it woek');
+
       // return { s: 'orra' };
       return res.redirect(
         process.env.LOGIN_SUCCESS_REDIRECT_URL + response.accessToken,

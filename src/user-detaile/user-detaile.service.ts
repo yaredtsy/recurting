@@ -37,6 +37,6 @@ export class UserDetaileService {
   }
 
   async imageUpload(user: User, file: Express.Multer.File) {
-    return await this.userDetaileRepository.updateProfile(user, file.path);
+    return await this.userDetaileRepository.updateProfileImage(user, file.path);
   }
 }
