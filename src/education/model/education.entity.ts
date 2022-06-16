@@ -23,10 +23,13 @@ export class Education extends BaseEntity {
   to: Date;
 
   @Column()
-  colleage: string;
+  college: string;
+
+  @Column({ nullable: true })
+  filed: string;
 
   @ManyToOne((type) => User, (user) => user.education, {
-    nullable: true,
+    nullable: false,
   })
   @JoinColumn()
   user: User;

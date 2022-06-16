@@ -20,5 +20,10 @@ export class UpdateEducationDto {
   @ApiProperty({ type: String, description: ' educationLevel ' })
   @IsOptional()
   @IsString()
-  colleage: string;
+  college: string;
+
+  @ApiProperty({ type: String, description: ' Filed of Area ' })
+  @IsOptional()
+  @IsString()
+  filed: string;
 }
