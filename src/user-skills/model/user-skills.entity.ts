@@ -30,6 +30,6 @@ export class UserSkill extends BaseEntity {
   @JoinColumn()
   user: User;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   proficiency: string;
 }

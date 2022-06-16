@@ -29,6 +29,7 @@ export class UserSkillRepository extends Repository<UserSkill> {
         user: user,
         skill: skill,
         yearsOfExperience: createUserSkill.yearsOfExperience,
+        proficiency: createUserSkill.proficiency,
       }).save();
 
       return userSkill;
@@ -54,6 +55,7 @@ export class UserSkillRepository extends Repository<UserSkill> {
         {
           skill: skill,
           yearsOfExperience: createUserSkill.yearsOfExperience,
+          proficiency: createUserSkill.proficiency,
         },
       );
 

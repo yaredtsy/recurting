@@ -21,10 +21,12 @@ export class UserSkillsService {
 
   async createUserSkill(user: User, createUserSkills: CreateUserSkillDto[]) {
     const userSkills = [];
+    console.log(createUserSkills);
 
     for (let i = 0; i < createUserSkills.length; i++) {
       const userSkill = await this.userSkillRepository.createUserSkill(
         user,
+
         createUserSkills[i],
       );
       if (userSkill) userSkills.push(userSkill);

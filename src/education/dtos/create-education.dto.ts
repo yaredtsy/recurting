@@ -20,5 +20,10 @@ export class CreateEducationDto {
   @ApiProperty({ type: String, description: ' educationLevel ' })
   @IsNotEmpty()
   @IsString()
-  colleage: string;
+  college: string;
+
+  @ApiProperty({ type: String, description: ' Filed of Area ' })
+  @IsNotEmpty()
+  @IsString()
+  filed: string;
 }

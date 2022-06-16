@@ -47,7 +47,7 @@ export class AuthService {
           user: user,
           firstName: createUserDto.firstName,
           lastName: createUserDto.lastName,
-        });
+        }).save();
       }
 
       response.user = this.userRepository.removeRealtedFiled(user);
