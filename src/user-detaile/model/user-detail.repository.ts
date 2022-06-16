@@ -19,18 +19,19 @@ export class UserDetaileRepository extends Repository<UserDetaile> {
       user.userDetails = userdetail;
       user.save();
     } else {
-      UserDetaile.update({ user: user }, createUserDetailDto);
+      await UserDetaile.update({ user: user }, createUserDetailDto);
+      return await UserDetaile.findOne({ user: user });
     }
 
     return userdetail;
   }
 
-  async updateProfile(user: User, path: string) {
+  async updateProfileImage(user: User, path: string) {
     const userdetail: UpdateResult = await UserDetaile.update(
       { user: user },
       { image: path },
     );
-    if (userdetail.affected > 0)
-      return await UserDetaile.findOne({ user: user });
+    // if (userdetail.affected > 0)
+    return await UserDetaile.findOne({ user: user });
   }
 }
