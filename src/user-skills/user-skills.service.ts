@@ -22,6 +22,7 @@ export class UserSkillsService {
   async createUserSkill(user: User, createUserSkills: CreateUserSkillDto[]) {
     const userSkills = [];
     console.log(createUserSkills);
+    await this.userSkillRepository.delete({ user: user });
 
     for (let i = 0; i < createUserSkills.length; i++) {
       const userSkill = await this.userSkillRepository.createUserSkill(
