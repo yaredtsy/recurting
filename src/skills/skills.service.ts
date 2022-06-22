@@ -11,6 +11,11 @@ export class SkillsService {
   ) {}
 
   async getSkills() {
+    const t = await this.skillRepository
+      .createQueryBuilder('skill')
+      .loadRelationCountAndMap('skill.job', 'skill.job')
+      .getMany();
+
     return await this.skillRepository.find({});
   }
 
