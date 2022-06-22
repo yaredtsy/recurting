@@ -32,8 +32,6 @@ export class UserRepository extends Repository<User> {
 
           return newUser;
         } catch (err) {
-          console.log(err);
-
           if (err.code == 23505) {
             isRegister = false;
             username =

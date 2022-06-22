@@ -78,6 +78,6 @@ export class AuthController {
       'this link is for test authentication.please add token before proceding',
   })
   async test(@Req() req) {
-    return await User.findOne({ id: req.user.id });
+    return this.authService.getUser(req.user);
   }
 }

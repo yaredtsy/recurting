@@ -12,7 +12,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { AdminLoginDto } from './dto/admin-login.dto';
 import { Role } from './model/role.enum';
 import { UserDetaile } from 'src/user-detaile/model/user-detail.entity';
-
+import { createQueryBuilder } from 'typeorm';
+import { Skill } from 'src/skills/model/skill.entity';
 @Injectable()
 export class AuthService {
   constructor(
@@ -43,11 +44,13 @@ export class AuthService {
       if (!user) {
         response.isRegister = false;
         user = await this.userRepository.createUser(createUserDto);
-        UserDetaile.create({
+        const userdetail = await UserDetaile.create({
           user: user,
           firstName: createUserDto.firstName,
           lastName: createUserDto.lastName,
         }).save();
+        user.userDetails = userdetail;
+        await user.save();
       }
 
       response.user = this.userRepository.removeRealtedFiled(user);
@@ -93,5 +96,33 @@ export class AuthService {
       lastName: '',
     });
     return newuser;
+  }
+
+  async getUser(user: User) {
+    let userQuery = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id: user.id })
+      .leftJoinAndSelect('user.skill', 'userSkill')
+      .leftJoinAndSelect('user.userDetails', 'userDetails')
+      .leftJoinAndSelect('user.workHistory', 'workHistory')
+      .leftJoinAndSelect('user.education', 'education')
+      .innerJoinAndSelect('userSkill.skill', 'sk')
+      .loadRelationCountAndMap('sk.job', 'sk.job')
+
+      .cache(50000)
+      .getOne();
+    if (userQuery == null) {
+      userQuery = await this.userRepository
+        .createQueryBuilder('user')
+        .where('user.id = :id', { id: user.id })
+        .leftJoinAndSelect('user.skill', 'userSkill')
+        .leftJoinAndSelect('user.userDetails', 'userDetails')
+        .leftJoinAndSelect('user.workHistory', 'workHistory')
+        .leftJoinAndSelect('user.education', 'education')
+        .cache(50000)
+        .getOne();
+    }
+
+    return userQuery;
   }
 }
