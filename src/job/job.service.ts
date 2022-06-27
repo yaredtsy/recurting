@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import e from 'express';
 import { FilterOperator, paginate, PaginateQuery } from 'nestjs-paginate';
 
 import { User } from 'src/auth/model/auth.entity';
@@ -7,6 +8,7 @@ import { In } from 'typeorm';
 import { AsiggnUsersDto } from './dtos/assign-users.dto';
 import { CreateJobDto } from './dtos/create-jobs.dto';
 import { JobFilterDto } from './dtos/job-filter.dto';
+import { UpdateJobStatusDto } from './dtos/update-job-status.dto';
 
 import { UpdateJobDto } from './dtos/update-job.dto';
 import { AssignedUser } from './model/assigned-user.entity';
@@ -23,20 +25,43 @@ export class JobService {
   ) {}
 
   async getJobs(query: PaginateQuery) {
-    return paginate(query, this.jobRepository, {
+    const queryBuilder = Job.createQueryBuilder('job')
+      .leftJoinAndSelect('job.company', 'company')
+      .leftJoinAndSelect('job.assignedUsers', 'assignedUsers')
+      .loadRelationCountAndMap('job.candidates', 'job.assignedUsers');
+
+    return paginate(query, queryBuilder, {
       sortableColumns: ['created_at', 'id'],
       searchableColumns: ['jobType', 'role'],
       defaultSortBy: [['created_at', 'DESC']],
-      relations: ['skills'],
+      relations: ['skills', 'company'],
       filterableColumns: {
         'skills.name': [FilterOperator.IN],
       },
     });
   }
 
-  async createJobs(createUserDto: CreateJobDto) {
-    return await this.jobRepository.createJob(createUserDto);
+  async updateJobStatus(id: number, status: UpdateJobStatusDto) {
+    const job = await Job.update({ id: id }, { status: status.status });
+    return await this.getJob(id);
   }
+
+  async getJob(id: number): Promise<Job> {
+    return await Job.createQueryBuilder('job')
+      .where('job.id = :id', {
+        id: id,
+      })
+      .leftJoinAndSelect('job.company', 'company')
+      .leftJoinAndSelect('job.assignedUsers', 'assignedUsers')
+      .loadRelationCountAndMap('job.candidates', 'job.assignedUsers')
+      .getOne();
+  }
+
+  async createJobs(createUserDto: CreateJobDto) {
+    const job = this.jobRepository.createJob(createUserDto);
+    return this.getJob((await job).id);
+  }
+
   async updateJob(id: number, updateJobDto: UpdateJobDto) {
     return await this.jobRepository.updateJob(id, updateJobDto);
   }
@@ -85,22 +110,35 @@ export class JobService {
         .getMany();
       const jobsId = id.map((jobs) => jobs.id);
 
-      const queryBuilder = Job.createQueryBuilder('job')
-        .leftJoinAndSelect('job.skills', 'skill')
-        .where('job.id IN (:...ids)', { ids: jobsId });
+      if (jobsId.length > 0) {
+        const queryBuilder = Job.createQueryBuilder('job')
+          .leftJoinAndSelect('job.skills', 'skill')
+          .where('job.id IN (:...ids)', { ids: jobsId });
 
-      return paginate(query, queryBuilder, {
-        sortableColumns: ['created_at', 'id'],
-        searchableColumns: ['description', 'role'],
-        defaultSortBy: [['created_at', 'DESC']],
-        relations: ['skills', 'assignedUsers'],
-        filterableColumns: {
-          status: [FilterOperator.IN],
-          'assignedUsers.status': [FilterOperator.IN],
-          'skills.name': [FilterOperator.IN],
-        },
-      });
+        return paginate(query, queryBuilder, {
+          sortableColumns: ['created_at', 'id'],
+          searchableColumns: ['description', 'role'],
+          defaultSortBy: [['created_at', 'DESC']],
+          relations: ['skills', 'assignedUsers'],
+          filterableColumns: {
+            status: [FilterOperator.IN],
+            'assignedUsers.status': [FilterOperator.IN],
+            'skills.name': [FilterOperator.IN],
+          },
+        });
+      } else {
+        return {
+          data: [],
+          meta: null,
+          links: null,
+        };
+      }
+    } else {
+      return {
+        data: [],
+        meta: null,
+        links: null,
+      };
     }
-    return [];
   }
 }

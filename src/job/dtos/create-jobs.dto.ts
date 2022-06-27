@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { JobStatus, ProficiencyType } from '../model/job.entity';
+import { ProficiencyType } from '../model/job.entity';
 
 export class CreateJobDto {
   @IsNotEmpty()
@@ -33,7 +33,7 @@ export class CreateJobDto {
   @IsEnum(ProficiencyType)
   proficiencyType: ProficiencyType;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsArray()
   skills: [];
 }

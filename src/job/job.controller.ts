@@ -30,6 +30,7 @@ import { UpdateJobDto } from './dtos/update-job.dto';
 import { JobService } from './job.service';
 import { JobFilterDto } from './dtos/job-filter.dto';
 import { Paginate, PaginateQuery } from 'nestjs-paginate';
+import { UpdateJobStatusDto } from './dtos/update-job-status.dto';
 
 @Controller('job')
 @ApiTags('Jobs')
@@ -37,6 +38,8 @@ export class JobController {
   constructor(private jobsService: JobService) {}
 
   @Get('')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiQuery({ name: 'page', type: Number, required: false })
   @ApiQuery({ name: 'limit', type: Number, required: false })
   @ApiQuery({ name: 'sortBy', type: [String], required: false })
@@ -46,15 +49,21 @@ export class JobController {
     return this.jobsService.getJobs(query);
   }
 
-  // @Get('related')
-  // @ApiBearerAuth()
-  // @UseGuards(AuthGuard)
-  // @UsePipes(ValidationPipe)
-  // getUserRealtedJob(
-  //   @Query('page', new ParseIntPipe()) page: number,
-  //   @Query('limit', new ParseIntPipe()) limit: number,
-  //   @Query() jobFilterDto: JobFilterDto,
-  // ) {}
+  @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard(), RolesGuard)
+  getJob(@Param('id', new ParseIntPipe()) id: number) {
+    return this.jobsService.getJob(id);
+  }
+
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Patch('update-status/:id')
+  updateJobStatus(
+    @Param('id', new ParseIntPipe()) id,
+    @Body() updateJobStatus: UpdateJobStatusDto,
+  ) {
+    return this.jobsService.updateJobStatus(id, updateJobStatus);
+  }
 
   @Get('related')
   @ApiBearerAuth()

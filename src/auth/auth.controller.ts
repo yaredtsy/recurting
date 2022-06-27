@@ -2,6 +2,9 @@ import {
   Body,
   Controller,
   Get,
+  Param,
+  ParseIntPipe,
+  Patch,
   Post,
   Redirect,
   Req,
@@ -17,6 +20,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AdminLoginDto } from './dto/admin-login.dto';
+import { Paginate, PaginateQuery } from 'nestjs-paginate';
+import { Roles } from './decorator/role.decorator';
+import { RolesGuard } from './guards/roles.guard';
+import { Role } from './model/role.enum';
+import { UpdateUserStatusDto } from './dto/update-user-status.dto';
 
 @Controller('auth')
 @ApiTags('Authentication')
@@ -55,8 +63,6 @@ export class AuthController {
     deprecated: true,
   })
   signUP(@Req() req, @Body() createUserDto: CreateUserDto) {
-    console.log('r');
-
     return this.authService.signUp(req.user, createUserDto);
   }
 
@@ -67,6 +73,35 @@ export class AuthController {
   })
   loginAdmin(@Body(ValidationPipe) adminLogin: AdminLoginDto) {
     return this.authService.adminLogin(adminLogin);
+  }
+
+  @Get('users')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN)
+  @ApiOperation({
+    summary: 'Get All User list',
+    description: 'this linl will get you all the users list.',
+  })
+  async getUsersList(@Paginate() query: PaginateQuery) {
+    return this.authService.getUsersList(query);
+  }
+
+  @Patch('update-user-status')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN)
+  @ApiOperation({
+    summary: 'update user status',
+    description: 'admins can update user status ',
+  })
+  async updateUserStatus(
+    @Param('id', new ParseIntPipe()) id,
+    updateUserStatus: UpdateUserStatusDto,
+  ) {
+    return this.authService.updateUserStatus(id, updateUserStatus);
   }
 
   @Get('getUser')

@@ -19,7 +19,7 @@ export class AssignedUser extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne((type) => Job, (job) => job.assignedUsers)
+  @ManyToOne((type) => Job, (job) => job.assignedUsers, { onDelete: 'CASCADE' })
   @JoinColumn()
   job: Job;
 
