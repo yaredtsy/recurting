@@ -6,6 +6,7 @@ import {
   BaseEntity,
   BeforeInsert,
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -13,6 +14,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   Unique,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Role, userStatus } from './role.enum';
 import * as bcrypt from 'bcrypt';
@@ -35,6 +37,12 @@ export class User extends BaseEntity {
 
   @Column({ nullable: true })
   salt: string;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 
   @OneToOne(() => UserDetaile, (userDetaile) => userDetaile.user, {
     eager: true,

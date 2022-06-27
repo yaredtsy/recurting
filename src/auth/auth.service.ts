@@ -14,6 +14,8 @@ import { Role } from './model/role.enum';
 import { UserDetaile } from 'src/user-detaile/model/user-detail.entity';
 import { createQueryBuilder } from 'typeorm';
 import { Skill } from 'src/skills/model/skill.entity';
+import { paginate, PaginateQuery } from 'nestjs-paginate';
+import { UpdateUserStatusDto } from './dto/update-user-status.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -106,6 +108,7 @@ export class AuthService {
       .leftJoinAndSelect('user.userDetails', 'userDetails')
       .leftJoinAndSelect('user.workHistory', 'workHistory')
       .leftJoinAndSelect('user.education', 'education')
+      .leftJoinAndSelect('workHistory.skills', 'skills')
       .innerJoinAndSelect('userSkill.skill', 'sk')
       .loadRelationCountAndMap('sk.job', 'sk.job')
 
@@ -124,5 +127,20 @@ export class AuthService {
     }
 
     return userQuery;
+  }
+
+  async getUsersList(query: PaginateQuery) {
+    return paginate(query, this.userRepository, {
+      relations: ['userDetails'],
+      sortableColumns: ['username', 'email', 'id'],
+      searchableColumns: ['userDetails.firstName', 'role'],
+      defaultSortBy: [['created_at', 'DESC']],
+    });
+  }
+
+  async updateUserStatus(id: number, status: UpdateUserStatusDto) {
+    await this.userRepository.update({ id: id }, { status: status.status });
+    const job = await this.userRepository.findOne(id);
+    return await this.getUser(job);
   }
 }
