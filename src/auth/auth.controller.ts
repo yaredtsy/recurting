@@ -25,6 +25,7 @@ import { Roles } from './decorator/role.decorator';
 import { RolesGuard } from './guards/roles.guard';
 import { Role } from './model/role.enum';
 import { UpdateUserStatusDto } from './dto/update-user-status.dto';
+import { GetPossibleMatchDto } from './dto/get-possible-match.dto';
 
 @Controller('auth')
 @ApiTags('Authentication')
@@ -54,8 +55,9 @@ export class AuthController {
     return this.authService.googleLogin(req, res);
   }
 
-  @Post('signup')
-  @UseGuards(AuthGuard())
+  @Post('create-user')
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UsePipes(ValidationPipe)
   @ApiOperation({
     summary: 'this api is not needed',
@@ -63,7 +65,7 @@ export class AuthController {
     deprecated: true,
   })
   signUP(@Req() req, @Body() createUserDto: CreateUserDto) {
-    return this.authService.signUp(req.user, createUserDto);
+    return this.authService.createAdmin(createUserDto);
   }
 
   @Post('adminLogin')
@@ -78,28 +80,62 @@ export class AuthController {
   @Get('users')
   @ApiBearerAuth()
   @UseGuards(AuthGuard(), RolesGuard)
-  @Roles(Role.ADMIN)
-  @Roles(Role.SUPERADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @ApiOperation({
     summary: 'Get All User list',
-    description: 'this linl will get you all the users list.',
+    description: 'this link will get you all the users list.',
   })
   async getUsersList(@Paginate() query: PaginateQuery) {
     return this.authService.getUsersList(query);
   }
 
-  @Patch('update-user-status')
+  @Get('admins')
   @ApiBearerAuth()
   @UseGuards(AuthGuard(), RolesGuard)
-  @Roles(Role.ADMIN)
-  @Roles(Role.SUPERADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @ApiOperation({
+    summary: 'Get All admin user list',
+    description: 'this link will get you all the admin list.',
+  })
+  async getAdminUserList(@Paginate() query: PaginateQuery) {
+    return this.authService.getAdminUserList(query);
+  }
+
+  @Get('users/:id')
+  @ApiBearerAuth()
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
+  @ApiOperation({
+    summary: 'Get All User list',
+    description: 'this linl will get you all the users list.',
+  })
+  async getSelectUser(@Param('id', new ParseIntPipe()) id: number) {
+    return this.authService.getSelectedUser(id);
+  }
+
+  @Post('possible-match')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  async getPossibleMatch(
+    @Paginate() query: PaginateQuery,
+    @Body(ValidationPipe) getPossibleMatch: GetPossibleMatchDto,
+  ) {
+    return this.authService.getPossibleMatch(query, getPossibleMatch);
+  }
+
+  @Patch('update-user-status/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @UsePipes(ValidationPipe)
   @ApiOperation({
     summary: 'update user status',
     description: 'admins can update user status ',
   })
   async updateUserStatus(
     @Param('id', new ParseIntPipe()) id,
-    updateUserStatus: UpdateUserStatusDto,
+    @Body() updateUserStatus: UpdateUserStatusDto,
   ) {
     return this.authService.updateUserStatus(id, updateUserStatus);
   }

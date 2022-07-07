@@ -1,6 +1,7 @@
 import { User } from 'src/auth/model/auth.entity';
 import { Skill } from 'src/skills/model/skill.entity';
 import {
+  AfterLoad,
   BaseEntity,
   Column,
   Entity,
@@ -32,4 +33,7 @@ export class UserSkill extends BaseEntity {
 
   @Column({ nullable: false })
   proficiency: string;
+
+  @Column({ nullable: true, insert: false, select: true, update: false })
+  name: string;
 }

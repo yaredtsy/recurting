@@ -51,7 +51,7 @@ export class User extends BaseEntity {
   @JoinColumn({ name: 'userDetails' })
   userDetails: UserDetaile;
 
-  @Column({ type: 'enum', enum: userStatus, default: userStatus.NOTCOMPLETED })
+  @Column({ type: 'enum', enum: userStatus, default: userStatus.ACTIVE })
   status: userStatus;
 
   @Column({ type: 'enum', enum: Role, default: Role.USER })

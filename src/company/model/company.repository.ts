@@ -25,7 +25,10 @@ export class ComapanyRepository extends Repository<Company> {
   async updateCompany(id: number, updateCompanyDto: CreateCompanyDto) {
     let result;
     try {
-      result = await Company.update({ id: id }, { ...updateCompanyDto });
+      result = await Company.update(
+        { id: id },
+        { name: updateCompanyDto.name, email: updateCompanyDto.email },
+      );
     } catch (error) {
       if (error.code === '23505') {
         throw new ConflictException('company alerady exists');

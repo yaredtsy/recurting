@@ -5,8 +5,9 @@ import {
 
 import { Company } from 'src/company/model/company.entity';
 import { Skill } from 'src/skills/model/skill.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository, UpdateResult } from 'typeorm';
 import { CreateJobDto } from '../dtos/create-jobs.dto';
+import { UpdateJobSkillDto } from '../dtos/update-job-skill.dto';
 import { UpdateJobDto } from '../dtos/update-job.dto';
 import { Job, JobStatus } from './job.entity';
 
@@ -18,13 +19,15 @@ export class JobRepository extends Repository<Job> {
   async createJob(createJob: CreateJobDto) {
     const company = await Company.findOne({ id: createJob.companyId });
     const skills = [];
-    for (let i = 0; i < createJob.skills.length; i++) {
-      const skill = await Skill.findOne({ id: createJob.skills[i] });
-      if (!skill) throw new NotFoundException('Skill not found');
-      skills.push(skill);
-    }
+    if (createJob.skills)
+      for (let i = 0; i < createJob.skills.length; i++) {
+        const skill = await Skill.findOne({ id: createJob.skills[i] });
+        if (!skill) throw new NotFoundException('Skill not found');
+        skills.push(skill);
+      }
 
     if (!company) throw new NotFoundException('Company not found');
+
     try {
       const job = Job.create({
         company: company,
@@ -41,7 +44,28 @@ export class JobRepository extends Repository<Job> {
     }
   }
   async updateJob(id: number, updateJob: UpdateJobDto) {
-    const result = await Job.update({ id: id }, { ...updateJob });
+    const company = await Company.findOne({ id: updateJob.companyId });
+    const skills = [];
+    if (updateJob.skills)
+      for (let i = 0; i < updateJob.skills.length; i++) {
+        const skill = await Skill.findOne({ id: updateJob.skills[i] });
+        if (!skill) throw new NotFoundException('Skill not found');
+        skills.push(skill);
+      }
+
+    if (!company) throw new NotFoundException('Company not found');
+    let result: UpdateResult;
+
+    delete updateJob.skills;
+    delete updateJob.companyId;
+
+    if (skills.length == 0)
+      result = await Job.update({ id: id }, { company: company, ...updateJob });
+    else
+      result = await Job.update(
+        { id: id },
+        { skills: skills, company: company, ...updateJob },
+      );
     if (result.affected == 0) throw new NotFoundException('job not found');
     return await Job.findOne(id);
   }
@@ -63,5 +87,20 @@ export class JobRepository extends Repository<Job> {
       .where('job.id = :jobId', { jobId })
       .getOne();
     return job;
+  }
+
+  async addSkills(id: number, updateJobSkill: UpdateJobSkillDto) {
+    const skills = [];
+    if (updateJobSkill.skills)
+      for (let i = 0; i < updateJobSkill.skills.length; i++) {
+        const skill = await Skill.findOne({ id: updateJobSkill.skills[i] });
+        if (!skill) throw new NotFoundException('Skill not found');
+        skills.push(skill);
+      }
+
+    const job = await Job.findOne({ id: id });
+    job.skills = skills;
+    await job.save();
+    return id;
   }
 }

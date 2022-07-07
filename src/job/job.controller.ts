@@ -31,6 +31,7 @@ import { JobService } from './job.service';
 import { JobFilterDto } from './dtos/job-filter.dto';
 import { Paginate, PaginateQuery } from 'nestjs-paginate';
 import { UpdateJobStatusDto } from './dtos/update-job-status.dto';
+import { UpdateJobSkillDto } from './dtos/update-job-skill.dto';
 
 @Controller('job')
 @ApiTags('Jobs')
@@ -40,6 +41,7 @@ export class JobController {
   @Get('')
   @ApiBearerAuth()
   @UseGuards(AuthGuard(), RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @ApiQuery({ name: 'page', type: Number, required: false })
   @ApiQuery({ name: 'limit', type: Number, required: false })
   @ApiQuery({ name: 'sortBy', type: [String], required: false })
@@ -49,15 +51,25 @@ export class JobController {
     return this.jobsService.getJobs(query);
   }
 
+  @Get('general-info')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  getGeneralInfo() {
+    return this.jobsService.getGeneralInfo();
+  }
+
   @Get(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard(), RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   getJob(@Param('id', new ParseIntPipe()) id: number) {
     return this.jobsService.getJob(id);
   }
 
   @UseGuards(AuthGuard(), RolesGuard)
   @Patch('update-status/:id')
+  @UsePipes(ValidationPipe)
   updateJobStatus(
     @Param('id', new ParseIntPipe()) id,
     @Body() updateJobStatus: UpdateJobStatusDto,
@@ -102,16 +114,16 @@ export class JobController {
     return this.jobsService.assignUser(id, assignUser);
   }
 
-  @Delete(':id/assign-user')
+  @Delete(':id/assign-user/:userid')
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(AuthGuard(), RolesGuard)
   @ApiBearerAuth()
   @UsePipes(ValidationPipe)
   deleteAssignedUser(
     @Param('id', new ParseIntPipe()) id,
-    @Body() assignUser: AsiggnUsersDto,
+    @Param('userid', new ParseIntPipe()) userid,
   ) {
-    return this.jobsService.deleteAssignUser(id, assignUser);
+    return this.jobsService.deleteAssignUser(id, userid);
   }
 
   @Patch(':id/assign-user')
@@ -126,7 +138,7 @@ export class JobController {
     return this.jobsService.updateassignUser(id, assignUser);
   }
 
-  @Patch('')
+  @Patch(':id')
   @UseGuards(AuthGuard())
   @ApiBearerAuth()
   @UsePipes(ValidationPipe)
@@ -135,10 +147,22 @@ export class JobController {
     @Param('id', new ParseIntPipe()) id,
     @Body() updateJobs: UpdateJobDto,
   ) {
-    return this.updateJob(id, updateJobs);
+    return this.jobsService.updateJob(id, updateJobs);
   }
 
-  @Delete('')
+  @Patch(':id/add-skill')
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
+  @ApiBearerAuth()
+  @UsePipes(ValidationPipe)
+  addSkill(
+    @Param('id', new ParseIntPipe()) id,
+    @Body() updateSkill: UpdateJobSkillDto,
+  ) {
+    return this.jobsService.addSKill(id, updateSkill);
+  }
+
+  @Delete(':id')
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'summary goes here',
