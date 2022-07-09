@@ -157,24 +157,40 @@ export class AuthService {
     return await this.getUser(job);
   }
 
+  async updateUser(id: number, createUserDto: CreateUserDto) {
+    const user = await this.userRepository.findOne(id);
+    if (createUserDto.password.localeCompare(user.password) != 0) {
+      createUserDto.password = await user.EncryptPassword(
+        createUserDto.password,
+      );
+      console.log(createUserDto);
+    } else delete createUserDto.password;
+    await this.userRepository.update(
+      { id: id },
+      { password: createUserDto.password, ...createUserDto },
+    );
+
+    return await this.userRepository.findOne(id);
+  }
+
   async getPossibleMatch(
     query: PaginateQuery,
     getPossibleMatch: GetPossibleMatchDto,
   ) {
-    const queryBuilder = User.createQueryBuilder('user')
-      .leftJoinAndSelect('user.skill', 'skill')
-      .leftJoinAndSelect('skill.skill', 'skills')
-      .where('skills.id IN (:...skills)', {
-        skills: getPossibleMatch.skills,
-      });
-    return paginate(query, queryBuilder, {
+    // const queryBuilder = User.createQueryBuilder('user')
+    //   .leftJoinAndSelect('user.skill', 'skill')
+    //   .leftJoinAndSelect('skill.skill', 'skills')
+    //   .where('skills.id IN (:...skills)', {
+    //     skills: getPossibleMatch.skills,
+    //   });
+    return paginate(query, this.userRepository, {
       relations: ['userDetails', 'skill'],
 
       sortableColumns: ['username', 'email', 'id'],
       searchableColumns: ['userDetails.firstName', 'role'],
       defaultSortBy: [['created_at', 'DESC']],
       filterableColumns: {
-        'skill.skill.name': [FilterOperator.IN],
+        'skill.skill.id': [FilterOperator.IN],
       },
     });
   }

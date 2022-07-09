@@ -84,6 +84,14 @@ export class User extends BaseEntity {
 
     this.password = await bcrypt.hash(password || this.password, this.salt);
   }
+
+  async EncryptPassword(password: string) {
+    this.salt = await bcrypt.genSalt();
+
+    password = await bcrypt.hash(password || this.password, this.salt);
+    return password;
+  }
+
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);
     const bb = bcrypt.compareSync(password, this.password);

@@ -41,6 +41,10 @@ export class ComapanyRepository extends Repository<Company> {
   }
 
   async deleteCompany(id: number) {
+    const company = await Company.findOne(id, { relations: ['job'] });
+
+    if (company.job.length > 0)
+      throw new ConflictException('Company has alredy job ');
     const result = await Company.delete({ id });
     if (result.affected == 0) throw new NotFoundException('company delete');
 

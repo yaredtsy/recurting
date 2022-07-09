@@ -68,6 +68,23 @@ export class AuthController {
     return this.authService.createAdmin(createUserDto);
   }
 
+  @Patch('update-user/:id')
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @UsePipes(ValidationPipe)
+  @ApiOperation({
+    summary: 'this api is not needed',
+    description: 'this link is no longer needed',
+    deprecated: true,
+  })
+  updateUser(
+    @Req() req,
+    @Param('id', new ParseIntPipe()) id: number,
+    @Body() createUserDto: CreateUserDto,
+  ) {
+    return this.authService.updateUser(id, createUserDto);
+  }
+
   @Post('adminLogin')
   @ApiOperation({
     summary: 'Authentication for admin',

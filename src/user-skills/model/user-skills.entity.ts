@@ -36,4 +36,12 @@ export class UserSkill extends BaseEntity {
 
   @Column({ nullable: true, insert: false, select: true, update: false })
   name: string;
+
+  @AfterLoad()
+  async pop() {
+    const data = await Skill.findOne(this.skill);
+    console.log(data);
+
+    this.name = data.name;
+  }
 }
