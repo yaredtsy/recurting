@@ -23,7 +23,8 @@ export class UserRepository extends Repository<User> {
           const newUser = new User();
           newUser.email = createUserDto.email;
           newUser.username = username;
-          newUser.password = 'None';
+          newUser.password = createUserDto.password;
+          newUser.role = createUserDto.role;
 
           isRegister = true;
 
@@ -69,8 +70,6 @@ export class UserRepository extends Repository<User> {
 
     return user;
   }
-
-  // loginAdmin(adminLoginDto: AdminLoginDto) {}
 
   async signup(adminLoginDto: AdminLoginDto) {
     const user = new User();

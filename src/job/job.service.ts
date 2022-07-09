@@ -8,12 +8,14 @@ import { In } from 'typeorm';
 import { AsiggnUsersDto } from './dtos/assign-users.dto';
 import { CreateJobDto } from './dtos/create-jobs.dto';
 import { JobFilterDto } from './dtos/job-filter.dto';
+import { UpdateJobSkillDto } from './dtos/update-job-skill.dto';
 import { UpdateJobStatusDto } from './dtos/update-job-status.dto';
 
 import { UpdateJobDto } from './dtos/update-job.dto';
 import { AssignedUser } from './model/assigned-user.entity';
+import { AssignedUserStatus } from './model/assigned-user.enum';
 import { AssignedUserRepository } from './model/assigned-user.repository';
-import { Job } from './model/job.entity';
+import { Job, JobStatus } from './model/job.entity';
 import { JobRepository } from './model/job.repository';
 
 @Injectable()
@@ -23,20 +25,47 @@ export class JobService {
     @InjectRepository(AssignedUserRepository)
     private assignUserRepository: AssignedUserRepository,
   ) {}
+  async getGeneralInfo() {
+    const interviewing = await Job.createQueryBuilder('job')
+      .leftJoinAndSelect('job.assignedUsers', 'assignedUsers')
+      .where('assignedUsers.status = :status', {
+        status: AssignedUserStatus.INTERVIEWING,
+      })
+      .getCount();
 
+    const open = await Job.createQueryBuilder('job')
+      .where('job.status = :status', {
+        status: JobStatus.OPEN,
+      })
+      .getCount();
+    const closed = await Job.createQueryBuilder('job')
+      .where('job.status = :status', {
+        status: JobStatus.CLOSED,
+      })
+      .getCount();
+
+    return { interviewing: interviewing, closed: closed, open: open };
+  }
   async getJobs(query: PaginateQuery) {
     const queryBuilder = Job.createQueryBuilder('job')
       .leftJoinAndSelect('job.company', 'company')
       .leftJoinAndSelect('job.assignedUsers', 'assignedUsers')
+      .leftJoinAndSelect('assignedUsers.user', 'user')
+      .leftJoinAndSelect('user.userDetails', 'userDetails')
       .loadRelationCountAndMap('job.candidates', 'job.assignedUsers');
 
     return paginate(query, queryBuilder, {
       sortableColumns: ['created_at', 'id'],
-      searchableColumns: ['jobType', 'role'],
+      searchableColumns: ['jobType', 'role', 'description'],
       defaultSortBy: [['created_at', 'DESC']],
-      relations: ['skills', 'company'],
+      relations: ['skills', 'company', 'assignedUsers'],
       filterableColumns: {
-        'skills.name': [FilterOperator.IN],
+        'skills.id': [FilterOperator.IN],
+        'assignedUsers.status': [FilterOperator.IN],
+        'assignedUsers.user.id': [FilterOperator.IN],
+
+        'company.id': [FilterOperator.IN],
+        status: [FilterOperator.IN],
       },
     });
   }
@@ -52,8 +81,10 @@ export class JobService {
         id: id,
       })
       .leftJoinAndSelect('job.company', 'company')
-      .leftJoinAndSelect('job.assignedUsers', 'assignedUsers')
+      .leftJoinAndSelect('job.skills', 'skills')
       .loadRelationCountAndMap('job.candidates', 'job.assignedUsers')
+      .leftJoinAndSelect('job.assignedUsers', 'assignedUsers')
+      .leftJoinAndSelect('assignedUsers.user', 'user')
       .getOne();
   }
 
@@ -70,11 +101,13 @@ export class JobService {
   }
 
   async assignUser(jobId: number, assignUser: AsiggnUsersDto) {
-    return await this.assignUserRepository.assignUsers(jobId, assignUser);
+    const job = await this.assignUserRepository.assignUsers(jobId, assignUser);
+    return await this.getJob(job.id);
   }
 
-  async deleteAssignUser(jobId: number, assignUser: AsiggnUsersDto) {
-    return await this.assignUserRepository.removeassignUser(jobId, assignUser);
+  async deleteAssignUser(jobId: number, userid: number) {
+    const job = await this.assignUserRepository.removeassignUser(jobId, userid);
+    return await this.getJob(job.id);
   }
 
   async updateassignUser(jobId: number, assignUser: AsiggnUsersDto) {
@@ -140,5 +173,10 @@ export class JobService {
         links: null,
       };
     }
+  }
+
+  async addSKill(id: number, updateJobSkill: UpdateJobSkillDto) {
+    await this.jobRepository.addSkills(id, updateJobSkill);
+    return await this.getJob(id);
   }
 }

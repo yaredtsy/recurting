@@ -66,7 +66,7 @@ export class Job extends BaseEntity {
   @JoinColumn()
   company: Company;
 
-  @ManyToMany((type) => Skill, (skill) => skill.job)
+  @ManyToMany((type) => Skill, (skill) => skill.job, { cascade: true })
   @JoinTable()
   skills: Skill[];
 }

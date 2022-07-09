@@ -25,7 +25,10 @@ export class ComapanyRepository extends Repository<Company> {
   async updateCompany(id: number, updateCompanyDto: CreateCompanyDto) {
     let result;
     try {
-      result = await Company.update({ id: id }, { ...updateCompanyDto });
+      result = await Company.update(
+        { id: id },
+        { name: updateCompanyDto.name, email: updateCompanyDto.email },
+      );
     } catch (error) {
       if (error.code === '23505') {
         throw new ConflictException('company alerady exists');
@@ -38,6 +41,10 @@ export class ComapanyRepository extends Repository<Company> {
   }
 
   async deleteCompany(id: number) {
+    const company = await Company.findOne(id, { relations: ['job'] });
+
+    if (company.job.length > 0)
+      throw new ConflictException('Company has alredy job ');
     const result = await Company.delete({ id });
     if (result.affected == 0) throw new NotFoundException('company delete');
 

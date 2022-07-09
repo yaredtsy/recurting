@@ -14,8 +14,9 @@ import { Role } from './model/role.enum';
 import { UserDetaile } from 'src/user-detaile/model/user-detail.entity';
 import { createQueryBuilder } from 'typeorm';
 import { Skill } from 'src/skills/model/skill.entity';
-import { paginate, PaginateQuery } from 'nestjs-paginate';
+import { FilterOperator, paginate, PaginateQuery } from 'nestjs-paginate';
 import { UpdateUserStatusDto } from './dto/update-user-status.dto';
+import { GetPossibleMatchDto } from './dto/get-possible-match.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -45,7 +46,11 @@ export class AuthService {
 
       if (!user) {
         response.isRegister = false;
-        user = await this.userRepository.createUser(createUserDto);
+        user = await this.userRepository.createUser({
+          password: 'None',
+          role: Role.USER,
+          ...createUserDto,
+        });
         const userdetail = await UserDetaile.create({
           user: user,
           firstName: createUserDto.firstName,
@@ -90,14 +95,9 @@ export class AuthService {
     return response;
   }
 
-  async signUp(user: User, createUserDto: CreateUserDto) {
-    const newuser = await this.userRepository.createUser({
-      email: user.email,
-      username: createUserDto.username,
-      firstName: '',
-      lastName: '',
-    });
-    return newuser;
+  async createAdmin(createUserDto: CreateUserDto) {
+    const user = await this.userRepository.createUser(createUserDto);
+    return user;
   }
 
   async getUser(user: User) {
@@ -129,8 +129,19 @@ export class AuthService {
     return userQuery;
   }
 
+  async getSelectedUser(id: number) {
+    const user = await User.findOne(id);
+    if (user) {
+      return await this.getUser(user);
+    }
+    throw new NotFoundException('User with id not found');
+  }
+
   async getUsersList(query: PaginateQuery) {
-    return paginate(query, this.userRepository, {
+    const userQuery = User.createQueryBuilder('user').where('role = :role', {
+      role: Role.USER,
+    });
+    return paginate(query, userQuery, {
       relations: ['userDetails'],
       sortableColumns: ['username', 'email', 'id'],
       searchableColumns: ['userDetails.firstName', 'role'],
@@ -139,8 +150,60 @@ export class AuthService {
   }
 
   async updateUserStatus(id: number, status: UpdateUserStatusDto) {
+    console.log(status);
+
     await this.userRepository.update({ id: id }, { status: status.status });
     const job = await this.userRepository.findOne(id);
     return await this.getUser(job);
+  }
+
+  async updateUser(id: number, createUserDto: CreateUserDto) {
+    const user = await this.userRepository.findOne(id);
+    if (createUserDto.password.localeCompare(user.password) != 0) {
+      createUserDto.password = await user.EncryptPassword(
+        createUserDto.password,
+      );
+      console.log(createUserDto);
+    } else delete createUserDto.password;
+    await this.userRepository.update(
+      { id: id },
+      { password: createUserDto.password, ...createUserDto },
+    );
+
+    return await this.userRepository.findOne(id);
+  }
+
+  async getPossibleMatch(
+    query: PaginateQuery,
+    getPossibleMatch: GetPossibleMatchDto,
+  ) {
+    // const queryBuilder = User.createQueryBuilder('user')
+    //   .leftJoinAndSelect('user.skill', 'skill')
+    //   .leftJoinAndSelect('skill.skill', 'skills')
+    //   .where('skills.id IN (:...skills)', {
+    //     skills: getPossibleMatch.skills,
+    //   });
+    return paginate(query, this.userRepository, {
+      relations: ['userDetails', 'skill'],
+
+      sortableColumns: ['username', 'email', 'id'],
+      searchableColumns: ['userDetails.firstName', 'role'],
+      defaultSortBy: [['created_at', 'DESC']],
+      filterableColumns: {
+        'skill.skill.id': [FilterOperator.IN],
+      },
+    });
+  }
+
+  async getAdminUserList(query: PaginateQuery) {
+    const userQuery = User.createQueryBuilder('user').where('role = :role', {
+      role: Role.ADMIN,
+    });
+    return paginate(query, userQuery, {
+      relations: ['userDetails'],
+      sortableColumns: ['username', 'email', 'id'],
+      searchableColumns: ['userDetails.firstName', 'role'],
+      defaultSortBy: [['created_at', 'DESC']],
+    });
   }
 }

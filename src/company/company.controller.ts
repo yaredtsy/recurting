@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Paginate, PaginateQuery } from 'nestjs-paginate';
 import { Roles } from 'src/auth/decorator/role.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Role } from 'src/auth/model/role.enum';
@@ -25,23 +26,27 @@ export class CompanyController {
   constructor(private companyService: CompanyService) {}
 
   @Get('')
-  getCompanys() {
-    return this.companyService.getCompanys();
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  getCompanys(@Paginate() query: PaginateQuery) {
+    return this.companyService.getCompanys(query);
   }
 
   @Post('')
   @UseGuards(AuthGuard(), RolesGuard)
   @ApiBearerAuth()
   @UsePipes(ValidationPipe)
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   createCompany(@Body() createCompany: CreateCompanyDto) {
     return this.companyService.createCompany(createCompany);
   }
 
   @Patch(':id')
   @ApiParam({ name: 'id', type: Number })
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiBearerAuth()
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UsePipes(ValidationPipe)
   updateCompany(
     @Param('id', new ParseIntPipe()) id: number,
@@ -52,8 +57,10 @@ export class CompanyController {
 
   @Delete(':id')
   @ApiParam({ name: 'id', type: Number })
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard(), RolesGuard)
   @ApiBearerAuth()
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @UsePipes(ValidationPipe)
   deleteCompany(@Param('id', new ParseIntPipe()) id: number) {
     return this.companyService.deleteCompany(id);
   }

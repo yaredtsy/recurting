@@ -22,7 +22,7 @@ export class AssignedUserRepository extends Repository<AssignedUser> {
 
     try {
       const assign = await AssignedUser.create({ user, job }).save();
-      return assign;
+      return job;
     } catch (err) {
       if (err.code === '23505') {
         throw new ConflictException('Users alredy assigned.');
@@ -32,15 +32,15 @@ export class AssignedUserRepository extends Repository<AssignedUser> {
     }
   }
 
-  async removeassignUser(jobid: number, assignUser: AsiggnUsersDto) {
+  async removeassignUser(jobid: number, userid: number) {
     const job = await Job.findOne({ id: jobid });
-    const user = await User.findOne({ id: assignUser.user, role: Role.USER });
+    const user = await User.findOne({ id: userid, role: Role.USER });
     if (!job) throw new BadRequestException('Job id not found');
     if (!user) throw new BadRequestException('User not found');
 
     try {
-      const users = await AssignedUser.delete({ user, job });
-      return users;
+      const users = await AssignedUser.delete({ user: user, job: job });
+      return job;
     } catch (error) {
       console.log(error);
     }
